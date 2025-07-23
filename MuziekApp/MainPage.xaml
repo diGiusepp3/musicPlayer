@@ -11,57 +11,28 @@
         </LinearGradientBrush>
     </ContentPage.Background>
 
-    <VerticalStackLayout Spacing="20"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center">
+    <ContentView x:Name="MainContainer">
+        <VerticalStackLayout Spacing="20"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center">
 
-        <!-- Logo -->
-        <Image x:Name="LogoImage"
-               Source="logo_listen.png"
-               WidthRequest="250"
-               HeightRequest="250"
-               Opacity="0"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
-               Margin="0,0,0,20" />
-
-        <!-- Titel -->
-        <Label x:Name="AppNameLabel"
-               Text="🎵 Millions of songs in reach"
-               FontSize="34"
-               FontAttributes="Bold"
-               Opacity="0"
-               HorizontalOptions="Center"
-               TextColor="White" />
-
-        <!-- Beschrijving -->
-        <Label x:Name="DescriptionLabel"
-               Text="Truly free!"
-               FontSize="20"
-               Opacity="0"
-               HorizontalOptions="Center"
-               TextColor="White"
-               Margin="0,0,0,40" />
-
-        <!-- Knoppen onder elkaar -->
-        <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
-            <Button x:Name="CreateAccountButton"
-                    Text="Register"
-                    Opacity="0"
-                    BackgroundColor="White"
-                    TextColor="{StaticResource BackgroundGradientEnd}"
-                    CornerRadius="25"
-                    Padding="40,12"
-                    Clicked="OnCreateAccountClicked" />
-
-            <Button x:Name="LoginButton"
-                    Text="Login"
-                    Opacity="0"
-                    BackgroundColor="{StaticResource SecondaryColor}"
-                    TextColor="White"
-                    CornerRadius="25"
-                    Padding="40,12"
-                    Clicked="OnLoginClicked" />
+            <Image x:Name="LogoImage" Source="logo_listen.png"
+                   WidthRequest="250" HeightRequest="250" Opacity="0" Margin="0,0,0,20"/>
+            <Label x:Name="AppNameLabel" Text="🎵 Millions of songs in reach"
+                   FontSize="34" FontAttributes="Bold" Opacity="0" TextColor="White"/>
+            <Label x:Name="DescriptionLabel" Text="Truly free!"
+                   FontSize="20" Opacity="0" TextColor="White" Margin="0,0,0,40"/>
+            <VerticalStackLayout Spacing="15">
+                <Button x:Name="CreateAccountButton" Text="Register"
+                        Opacity="0" BackgroundColor="White"
+                        TextColor="{StaticResource BackgroundGradientEnd}"
+                        CornerRadius="25" Padding="40,12"
+                        Clicked="OnCreateAccountClicked" />
+                <Button x:Name="LoginButton" Text="Login"
+                        Opacity="0" BackgroundColor="{StaticResource SecondaryColor}"
+                        TextColor="White" CornerRadius="25" Padding="40,12"
+                        Clicked="OnLoginClicked" />
+            </VerticalStackLayout>
         </VerticalStackLayout>
-    </VerticalStackLayout>
+    </ContentView>
 </ContentPage>
