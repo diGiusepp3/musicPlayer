@@ -7,12 +7,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-
-        // NavigationPage zodat PushAsync werkt
-        MainPage = new NavigationPage(new MainPage())
-        {
-            BarBackgroundColor = Colors.Transparent,
-            BarTextColor = Colors.White
-        };
+        MainPage = new AppShell();
     }
 }
+

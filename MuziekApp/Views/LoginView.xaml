@@ -12,9 +12,16 @@
     </ContentPage.Background>
 
     <VerticalStackLayout Spacing="20" Padding="20">
-        <Label Text="Login View"
+        <Label Text="Inloggen"
                FontSize="30"
                HorizontalOptions="Center"
                TextColor="White" />
+
+        <Entry Placeholder="E-mail" Text="{Binding Email}" />
+        <Entry Placeholder="Wachtwoord" IsPassword="True" Text="{Binding Password}" />
+
+        <Button Text="Inloggen" Command="{Binding LoginCommand}" />
+
+        <Label Text="{Binding Message}" TextColor="Red" />
     </VerticalStackLayout>
 </ContentPage>

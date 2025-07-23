@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:MuziekApp.ViewModels"
+             x:Class="MuziekApp.Views.RegisterView"
+             Shell.NavBarIsVisible="False">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{StaticResource BackgroundGradientStart}" Offset="0.0" />
+            <GradientStop Color="{StaticResource BackgroundGradientEnd}" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
+        <Label Text="Account aanmaken"
+               FontSize="28"
+               HorizontalOptions="Center"
+               TextColor="White"
+               FontAttributes="Bold" />
+
+        <!-- Email veld -->
+        <Entry Placeholder="E-mail"
+               Keyboard="Email"
+               Text="{Binding Email}"
+               PlaceholderColor="LightGray"
+               TextColor="White"
+               BackgroundColor="#33000000" />
+
+        <!-- Wachtwoord veld -->
+        <Entry Placeholder="Wachtwoord"
+               IsPassword="True"
+               Text="{Binding Password}"
+               PlaceholderColor="LightGray"
+               TextColor="White"
+               BackgroundColor="#33000000" />
+
+        <!-- Registreer knop -->
+        <Button Text="Registreren"
+                Command="{Binding RegisterCommand}"
+                BackgroundColor="White"
+                TextColor="{StaticResource BackgroundGradientEnd}"
+                CornerRadius="25"
+                Padding="40,12" />
+
+        <!-- Feedback -->
+        <Label Text="{Binding Message}"
+               FontSize="14"
+               TextColor="White"
+               HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentPage>

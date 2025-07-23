@@ -1,13 +1,11 @@
-﻿using Microsoft.Maui.Controls;
-using MuziekApp.Views;
-
-namespace MuziekApp;
+﻿namespace MuziekApp.Views;
 
 public partial class MainPage : ContentPage
 {
     public MainPage()
     {
         InitializeComponent();
+        Shell.SetNavBarIsVisible(this, false);
         this.Loaded += async (s, e) =>
         {
             await LogoImage.FadeTo(1, 1500, Easing.CubicIn);
@@ -16,7 +14,6 @@ public partial class MainPage : ContentPage
             await Task.Delay(1000);
             await AppNameLabel.FadeTo(1, 1000, Easing.CubicIn);
             await Task.Delay(1000);
-            await DescriptionLabel.FadeTo(1, 1000, Easing.CubicIn);
             await Task.Delay(500);
             await CreateAccountButton.FadeTo(1, 800, Easing.CubicIn);
             await LoginButton.FadeTo(1, 800, Easing.CubicIn);
@@ -26,7 +23,7 @@ public partial class MainPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        MainContainer.TranslationX = 0; // Reset bij terugkomst
+        MainContainer.TranslationX = 0;
     }
 
     private async Task AnimatePageOut()
@@ -37,12 +34,12 @@ public partial class MainPage : ContentPage
     private async void OnCreateAccountClicked(object sender, EventArgs e)
     {
         await AnimatePageOut();
-        await Navigation.PushAsync(new RegisterView());
+        await Shell.Current.GoToAsync(nameof(RegisterView));
     }
 
     private async void OnLoginClicked(object sender, EventArgs e)
     {
         await AnimatePageOut();
-        await Navigation.PushAsync(new LoginView());
+        await Shell.Current.GoToAsync(nameof(LoginView));
     }
 }
