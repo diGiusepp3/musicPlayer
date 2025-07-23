@@ -1,40 +1,52 @@
-﻿using System;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
+using MuziekApp.Views;
 
-namespace MuziekApp
+namespace MuziekApp;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public MainPage()
     {
-        public MainPage()
+        InitializeComponent();
+
+        this.Loaded += async (s, e) =>
         {
-            InitializeComponent();
+            await LogoImage.FadeTo(1, 1500, Easing.CubicIn);
+            await LogoImage.ScaleTo(1.05, 300, Easing.CubicOut);
+            await LogoImage.ScaleTo(1, 300, Easing.CubicIn);
 
-            // Animaties starten zodra pagina geladen is
-            this.Loaded += async (s, e) =>
-            {
-                // Logo fade-in
-                await LogoImage.FadeTo(1, 1500, Easing.CubicIn);
-                await LogoImage.ScaleTo(1.05, 300, Easing.CubicOut);
-                await LogoImage.ScaleTo(1, 300, Easing.CubicIn);
+            await Task.Delay(1000);
+            await AppNameLabel.FadeTo(1, 1000, Easing.CubicIn);
 
-                // Wacht 1 seconde -> App naam
-                await Task.Delay(1000);
-                await AppNameLabel.FadeTo(1, 1000, Easing.CubicIn);
+            await Task.Delay(1000);
+            await DescriptionLabel.FadeTo(1, 1000, Easing.CubicIn);
 
-                // Wacht 1 seconde -> Beschrijving
-                await Task.Delay(1000);
-                await DescriptionLabel.FadeTo(1, 1000, Easing.CubicIn);
+            await Task.Delay(500);
+            await CreateAccountButton.FadeTo(1, 800, Easing.CubicIn);
+            await LoginButton.FadeTo(1, 800, Easing.CubicIn);
+        };
+    }
 
-                // Wacht 0,5 seconde -> knoppen
-                await Task.Delay(500);
-                await CreateAccountButton.FadeTo(1, 800, Easing.CubicIn);
-                await LoginButton.FadeTo(1, 800, Easing.CubicIn);
-            };
-        }
+    private async Task AnimatePageOut()
+    {
+        await this.TranslateTo(-this.Width, 0, 400, Easing.CubicIn);
+    }
 
-        private void OnPlayClicked(object sender, EventArgs e)
-        {
-            DisplayAlert("Muziek App", "Muziek wordt afgespeeld!", "OK");
-        }
+    private async void OnCreateAccountClicked(object sender, EventArgs e)
+    {
+        await AnimatePageOut();
+        await Navigation.PushAsync(new RegisterView());
+    }
+
+    private async void OnLoginClicked(object sender, EventArgs e)
+    {
+        await AnimatePageOut();
+        await Navigation.PushAsync(new LoginView());
+    }
+    
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        this.TranslationX = 0; // Reset naar startpositie
     }
 }

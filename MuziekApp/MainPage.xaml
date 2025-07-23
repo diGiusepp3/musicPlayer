@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="MuziekApp.MainPage">
+             x:Class="MuziekApp.MainPage"
+             NavigationPage.HasNavigationBar="False">
 
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -10,43 +11,57 @@
         </LinearGradientBrush>
     </ContentPage.Background>
 
-    <VerticalStackLayout Spacing="30" Padding="30" 
-                         HorizontalOptions="Center" VerticalOptions="Center">
+    <VerticalStackLayout Spacing="20"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center">
 
         <!-- Logo -->
-        <Image x:Name="LogoImage" 
+        <Image x:Name="LogoImage"
                Source="logo_listen.png"
-               WidthRequest="220"
-               HeightRequest="220"
+               WidthRequest="250"
+               HeightRequest="250"
                Opacity="0"
                HorizontalOptions="Center"
-               VerticalOptions="Center" />
+               VerticalOptions="Center"
+               Margin="0,0,0,20" />
 
-        <!-- App naam -->
+        <!-- Titel -->
         <Label x:Name="AppNameLabel"
                Text="🎵 Millions of songs in reach"
-               FontSize="32"
-               HorizontalOptions="Center"
+               FontSize="34"
+               FontAttributes="Bold"
                Opacity="0"
+               HorizontalOptions="Center"
                TextColor="White" />
 
         <!-- Beschrijving -->
         <Label x:Name="DescriptionLabel"
                Text="Truly free!"
-               FontSize="18"
-               HorizontalOptions="Center"
+               FontSize="20"
                Opacity="0"
-               TextColor="White" />
+               HorizontalOptions="Center"
+               TextColor="White"
+               Margin="0,0,0,40" />
 
-        <!-- Knoppen -->
-        <Button x:Name="CreateAccountButton"
-                Text="Create an account"
-                Opacity="0"
-                HorizontalOptions="Center" />
+        <!-- Knoppen onder elkaar -->
+        <VerticalStackLayout Spacing="15" HorizontalOptions="Center">
+            <Button x:Name="CreateAccountButton"
+                    Text="Register"
+                    Opacity="0"
+                    BackgroundColor="White"
+                    TextColor="{StaticResource BackgroundGradientEnd}"
+                    CornerRadius="25"
+                    Padding="40,12"
+                    Clicked="OnCreateAccountClicked" />
 
-        <Button x:Name="LoginButton"
-                Text="Login"
-                Opacity="0"
-                HorizontalOptions="Center" />
+            <Button x:Name="LoginButton"
+                    Text="Login"
+                    Opacity="0"
+                    BackgroundColor="{StaticResource SecondaryColor}"
+                    TextColor="White"
+                    CornerRadius="25"
+                    Padding="40,12"
+                    Clicked="OnLoginClicked" />
+        </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

@@ -1,14 +1,18 @@
-﻿namespace MuziekApp;
+﻿using Microsoft.Maui.Controls;
+
+namespace MuziekApp;
 
 public partial class App : Application
 {
     public App()
     {
         InitializeComponent();
-    }
 
-    protected override Window CreateWindow(IActivationState? activationState)
-    {
-        return new Window(new AppShell());
+        // NavigationPage zodat PushAsync werkt
+        MainPage = new NavigationPage(new MainPage())
+        {
+            BarBackgroundColor = Colors.Transparent,
+            BarTextColor = Colors.White
+        };
     }
 }
