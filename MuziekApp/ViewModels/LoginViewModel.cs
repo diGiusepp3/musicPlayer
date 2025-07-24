@@ -21,15 +21,19 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private async Task Login()
     {
-        var success = await _database.LoginUserAsync(Email, Password);
-        if (success)
-        {
-            Message = "Welkom!";
-            await Shell.Current.GoToAsync(nameof(MainView)); // route uit AppShell gebruiken
-        }
-        else
+        var user = await _database.LoginAndGetUserAsync(Email, Password);
+        if (user == null)
         {
             Message = "Verkeerde gegevens!";
+            return;
         }
+
+        Preferences.Set("user_id", user.Id);
+        Preferences.Set("user_email", user.Email);
+        Preferences.Set("is_premium", user.IsPremium);
+
+        Message = $"Welkom {user.Email}!";
+        await Shell.Current.GoToAsync($"{nameof(MainView)}");
     }
+
 }

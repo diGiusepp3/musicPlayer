@@ -7,6 +7,8 @@ public partial class AppShell : Shell
     public AppShell()
     {
         InitializeComponent();
+        
+        Shell.SetNavBarIsVisible(this, false);
 
         // Registreer routes
         Routing.RegisterRoute(nameof(LoginView), typeof(LoginView));

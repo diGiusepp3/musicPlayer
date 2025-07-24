@@ -1,10 +1,13 @@
-﻿namespace MuziekApp.Views;
+﻿using MuziekApp.ViewModels;
+
+namespace MuziekApp.Views;
 
 public partial class MainView : ContentPage
 {
-    public MainView()
+    public MainView(MainViewModel vm)
     {
         InitializeComponent();
+        BindingContext = vm;
     }
 
     private async void OnLogoutClicked(object sender, EventArgs e)
@@ -12,4 +15,11 @@ public partial class MainView : ContentPage
         // Navigatie terug naar loginpagina
         await Shell.Current.GoToAsync(nameof(LoginView));
     }
+    
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        Shell.SetNavBarIsVisible(this, false);
+    }
+
 }
