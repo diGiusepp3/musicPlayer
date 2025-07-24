@@ -24,6 +24,13 @@ public partial class MainPage : ContentPage
     {
         base.OnAppearing();
         MainContainer.TranslationX = 0;
+        
+        // Start check pas NA het tekenen van de UI
+        _ = Task.Run(async () =>
+        {
+            var startupChecker = new StartupCheckService();
+            await startupChecker.RunCheckAsync();
+        });
     }
 
     private async Task AnimatePageOut()
@@ -42,4 +49,6 @@ public partial class MainPage : ContentPage
         await AnimatePageOut();
         await Shell.Current.GoToAsync(nameof(LoginView));
     }
+    
+    
 }

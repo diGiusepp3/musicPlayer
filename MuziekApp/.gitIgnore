@@ -32,3 +32,8 @@ out/
 *.exe
 *.dll
 *.pdb
+
+# Public html
+*.inc
+ini.inc
+public_html/

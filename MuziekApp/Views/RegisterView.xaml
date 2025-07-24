@@ -28,9 +28,16 @@
                BackgroundColor="#33000000" />
 
         <!-- Wachtwoord veld -->
-        <Entry Placeholder="Wachtwoord"
+        <Entry Placeholder="Password"
                IsPassword="True"
                Text="{Binding Password}"
+               PlaceholderColor="LightGray"
+               TextColor="White"
+               BackgroundColor="#33000000" />
+        
+        <Entry Placeholder="Repeat password"
+               IsPassword="True"
+               Text="{Binding ConfirmPassword}"
                PlaceholderColor="LightGray"
                TextColor="White"
                BackgroundColor="#33000000" />

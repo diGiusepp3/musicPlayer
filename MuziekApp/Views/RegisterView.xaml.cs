@@ -1,12 +1,13 @@
 ﻿using MuziekApp.ViewModels;
 
-namespace MuziekApp.Views;
-
-public partial class RegisterView : ContentPage
+namespace MuziekApp.Views
 {
-    public RegisterView(RegisterViewModel vm)
+    public partial class RegisterView : ContentPage
     {
-        InitializeComponent();
-        BindingContext = vm;   
+        public RegisterView(RegisterViewModel vm)
+        {
+            InitializeComponent();
+            BindingContext = vm;
+        }
     }
 }
