@@ -36,6 +36,9 @@ namespace MuziekApp.Services
 #endif
         }
 
+        /// <summary>
+        /// Speelt een nummer af vanaf een URL en slaat titel/artist op.
+        /// </summary>
         public async Task PlayAsync(string url, string title = "", string artist = "")
         {
             Stop();
@@ -78,6 +81,9 @@ namespace MuziekApp.Services
             }
         }
 
+        /// <summary>
+        /// Speelt af of pauzeert afhankelijk van huidige status.
+        /// </summary>
         public void TogglePlayPause()
         {
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
@@ -98,6 +104,9 @@ namespace MuziekApp.Services
             }
         }
 
+        /// <summary>
+        /// Stop het huidige nummer.
+        /// </summary>
         public void Stop()
         {
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
@@ -111,6 +120,52 @@ namespace MuziekApp.Services
                 _player?.Stop();
                 _player = null;
             }
+        }
+
+        /// <summary>
+        /// Totale lengte van het huidige nummer.
+        /// </summary>
+        public TimeSpan Duration
+        {
+            get
+            {
+#if WINDOWS
+                return _mediaPlayer != null ? _mediaPlayer.NaturalDuration : TimeSpan.Zero;
+
+#else
+                return _player?.Duration ?? TimeSpan.Zero;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Huidige positie van het nummer.
+        /// </summary>
+        public TimeSpan Position
+        {
+            get
+            {
+#if WINDOWS
+                return _mediaPlayer?.Position ?? TimeSpan.Zero;
+#else
+                return _player?.CurrentPosition ?? TimeSpan.Zero;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Spring naar een specifieke tijd in het nummer.
+        /// </summary>
+        /// <param name="position">Nieuwe positie in seconden.</param>
+        public void Seek(TimeSpan position)
+        {
+#if WINDOWS
+            if (_mediaPlayer != null)
+                _mediaPlayer.Position = position;
+#else
+            if (_player != null)
+                _player.Seek(position);
+#endif
         }
     }
 }

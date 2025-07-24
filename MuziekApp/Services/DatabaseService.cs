@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using MuziekApp.Models;
 
-
 namespace MuziekApp.Services
 {
     public class DatabaseService
@@ -18,9 +17,18 @@ namespace MuziekApp.Services
             };
         }
 
-        /// <summary>
-        /// Checkt verbinding met de API (dbcheck.php).
-        /// </summary>
+        private class ApiResponse
+        {
+            public string Status { get; set; }
+        }
+
+        private class LoginResponse
+        {
+            public string Status { get; set; }
+            [JsonPropertyName("user")]
+            public User User { get; set; } 
+        }
+
         public async Task<bool> CheckConnectionAsync()
         {
             try
@@ -35,9 +43,6 @@ namespace MuziekApp.Services
             }
         }
 
-        /// <summary>
-        /// Registreert een nieuwe gebruiker via de API.
-        /// </summary>
         public async Task<bool> RegisterUserAsync(string email, string password)
         {
             try
@@ -66,9 +71,6 @@ namespace MuziekApp.Services
             }
         }
 
-        /// <summary>
-        /// Logt een gebruiker in en geeft de User info terug.
-        /// </summary>
         public async Task<User?> LoginAndGetUserAsync(string email, string password)
         {
             try
@@ -97,18 +99,6 @@ namespace MuziekApp.Services
             }
         }
 
-        private class ApiResponse
-        {
-            public string Status { get; set; }
-        }
-
-        private class LoginResponse
-        {
-            public string Status { get; set; }
-            [JsonPropertyName("user")]
-            public User User { get; set; } 
-        }
-        
         public async Task<bool> AddSongAsync(int albumId, string title, int duration, int trackNumber, string audioUrl, string filePath)
         {
             try
@@ -145,6 +135,48 @@ namespace MuziekApp.Services
                 return false;
             }
         }
-        
+
+        // ========== NIEUW ==========
+        public async Task<List<Song>> GetAllSongsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<Song>>("songs/get_all.php");
+                return response ?? new List<Song>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GetAllSongs exception: " + ex.Message);
+                return new List<Song>();
+            }
+        }
+
+        public async Task<List<Artist>> GetAllArtistsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<Artist>>("artists/get_all.php");
+                return response ?? new List<Artist>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GetAllArtists exception: " + ex.Message);
+                return new List<Artist>();
+            }
+        }
+
+        public async Task<List<Album>> GetAllAlbumsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<List<Album>>("albums/get_all.php");
+                return response ?? new List<Album>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("GetAllAlbums exception: " + ex.Message);
+                return new List<Album>();
+            }
+        }
     }
 }

@@ -11,60 +11,143 @@
 
         <!-- Bovenbalk -->
         <Grid Padding="20,40,20,10" ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
-            <Label Text="{Binding WelcomeMessage}" FontSize="28" TextColor="White" FontAttributes="Bold"
-                   Grid.Row="0" Grid.Column="0" VerticalOptions="Center"/>
-            <Image Source="profile.png" WidthRequest="40" HeightRequest="40"
-                   Grid.Row="0" Grid.Column="1" Aspect="AspectFill" Margin="0,0,10,0"/>
-            <Button Text="Log uit" Grid.Row="0" Grid.Column="2"
-                    Clicked="OnLogoutClicked" BackgroundColor="#1DB954" TextColor="White"/>
-            <SearchBar x:Name="SearchBarRef" Grid.Row="1" Grid.ColumnSpan="3"
+            <Label Text="{Binding WelcomeMessage}"
+                   FontSize="28"
+                   TextColor="White"
+                   FontAttributes="Bold"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   VerticalOptions="Center"/>
+            <Image Source="profile.png"
+                   WidthRequest="40"
+                   HeightRequest="40"
+                   Grid.Row="0"
+                   Grid.Column="1"
+                   Aspect="AspectFill"
+                   Margin="0,0,10,0"/>
+            <Button Text="Log uit"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Clicked="OnLogoutClicked"
+                    BackgroundColor="#1DB954"
+                    TextColor="White"/>
+            <SearchBar x:Name="SearchBarRef"
+                       Grid.Row="1"
+                       Grid.ColumnSpan="3"
                        Placeholder="Zoek naar nummers, artiesten..."
                        SearchCommand="{Binding SearchCommand}"
                        SearchCommandParameter="{Binding Text, Source={x:Reference SearchBarRef}}" />
         </Grid>
 
-        <!-- Lijst met liedjes -->
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Songs}" SelectionMode="None" Margin="20,0,20,0">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="10" ColumnDefinitions="80,*" BackgroundColor="#1E1E1E" Margin="0,0,0,10">
-                        <Frame HasShadow="False" Padding="0" CornerRadius="8" WidthRequest="70" HeightRequest="70">
-                            <Image Source="{Binding cover_url}" Aspect="AspectFill"/>
-                        </Frame>
-                        <VerticalStackLayout Grid.Column="1" Padding="10,0">
-                            <Label Text="{Binding title}" FontSize="18" FontAttributes="Bold" TextColor="White"/>
-                            <Label Text="{Binding artists}" FontSize="14" TextColor="Gray"/>
-                        </VerticalStackLayout>
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=PlaySongCommand}" 
-                                                  CommandParameter="{Binding .}"/>
-                        </Grid.GestureRecognizers>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <!-- Hoofdinhoud -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="20">
 
-        <!-- MiniPlayer onderaan -->
-        <Grid Grid.Row="2" BackgroundColor="#181818" Padding="10" HeightRequest="60"
+                <!-- Artiesten -->
+                <Label Text="Artiesten" FontSize="24" FontAttributes="Bold" TextColor="White"/>
+                <CollectionView ItemsSource="{Binding Artists}" HeightRequest="120" ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout WidthRequest="100" HorizontalOptions="Center">
+                                <Image Source="{Binding ImageUrl}"
+                                       HeightRequest="80"
+                                       WidthRequest="80"
+                                       Aspect="AspectFill"/>
+                                <Label Text="{Binding Name}" 
+                                       TextColor="White" 
+                                       FontSize="14"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Albums -->
+                <Label Text="Albums" FontSize="24" FontAttributes="Bold" TextColor="White"/>
+                <CollectionView ItemsSource="{Binding Albums}" HeightRequest="160" ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout WidthRequest="120" HorizontalOptions="Center">
+                                <Image Source="{Binding CoverUrl}"
+                                       HeightRequest="120"
+                                       WidthRequest="120"
+                                       Aspect="AspectFill"/>
+                                <Label Text="{Binding Title}" 
+                                       TextColor="White" 
+                                       FontSize="14" 
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Songs -->
+                <Label Text="Songs" FontSize="24" FontAttributes="Bold" TextColor="White"/>
+                <CollectionView ItemsSource="{Binding Songs}" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="5" ColumnDefinitions="60,*,Auto" BackgroundColor="#1E1E1E" Margin="0,0,0,5">
+                                <!-- Afbeelding -->
+                                <Image Source="{Binding cover_url}" WidthRequest="50" HeightRequest="50" Aspect="AspectFill"/>
+
+                                <!-- Song info -->
+                                <VerticalStackLayout Grid.Column="1">
+                                    <Label Text="{Binding title}" TextColor="White" FontSize="16"/>
+                                    <Label Text="{Binding artists}" TextColor="Gray" FontSize="12"/>
+                                </VerticalStackLayout>
+
+                                <!-- Duration -->
+                                <Label Text="{Binding duration}" TextColor="Gray" FontSize="14" Grid.Column="2"/>
+
+                                <!-- Tap gesture -->
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=PlaySongCommand}" 
+                                                          CommandParameter="{Binding .}"/>
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- MiniPlayer -->
+        <Grid Grid.Row="2" BackgroundColor="#181818" Padding="10" HeightRequest="80"
               IsVisible="{Binding IsMiniPlayerVisible}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <VerticalStackLayout Grid.Column="0">
+            <!-- Song info -->
+            <VerticalStackLayout Grid.Row="0" Grid.Column="0">
                 <Label Text="{Binding CurrentSongTitle}" TextColor="White" FontAttributes="Bold"/>
                 <Label Text="{Binding CurrentSongArtist}" TextColor="Gray" FontSize="12"/>
             </VerticalStackLayout>
 
-            <Button Grid.Column="1" Text="⏯"
+            <!-- Buttons -->
+            <Button Grid.Row="0" Grid.Column="1" Text="⏯"
                     Command="{Binding TogglePlayPauseCommand}"
                     BackgroundColor="#1DB954" TextColor="White" WidthRequest="50"/>
-            <Button Grid.Column="2" Text="⏹"
+            <Button Grid.Row="0" Grid.Column="2" Text="⏹"
                     Command="{Binding StopSongCommand}"
                     BackgroundColor="#B22222" TextColor="White" WidthRequest="50"
                     Margin="10,0,0,0"/>
+
+            <!-- Voortgangsbalk -->
+            <Slider x:Name="ProgressSlider" 
+                    Grid.Row="1" Grid.ColumnSpan="3"
+                    Minimum="0"
+                    Maximum="{Binding CurrentSongDuration}"
+                    Value="{Binding CurrentSongPosition, Mode=TwoWay}"
+                    DragCompleted="OnSliderDragCompleted"/>
         </Grid>
     </Grid>
 </ContentPage>

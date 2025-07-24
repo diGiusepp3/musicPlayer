@@ -28,6 +28,9 @@ public static class MauiProgram
         builder.Services.AddTransient<MainView>();
         builder.Services.AddTransient<UploadSongViewModel>();
         builder.Services.AddTransient<UploadSongView>();
+        builder.Services.AddTransient<AllMusicViewModel>();
+        builder.Services.AddTransient<AllMusicPage>();
+
 
 
 
