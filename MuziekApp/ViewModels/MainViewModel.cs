@@ -1,49 +1,74 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MuziekApp.Services;
 using System.Collections.ObjectModel;
 
 namespace MuziekApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        [ObservableProperty] private ObservableCollection<MusicItem> recommendedMusic;
-        [ObservableProperty] private ObservableCollection<ArtistItem> popularArtists;
-        [ObservableProperty] private string welcomeMessage;
-        [ObservableProperty] private bool showUploadButton;
+        private readonly SongService _songService = new();
+
+        [ObservableProperty] private string message;
+        [ObservableProperty] private string welcomeMessage = "Welkom terug!";
+        [ObservableProperty] private bool showUploadButton = true;
+        [ObservableProperty] private string currentSongTitle;
+        [ObservableProperty] private string currentSongArtist;
+        [ObservableProperty] private bool isMiniPlayerVisible;
+
+        public ObservableCollection<Song> Songs { get; } = new();
 
         public MainViewModel()
         {
-            var userId = Preferences.Get("user_id", 0);
-            var displayName = Preferences.Get("display_name", "User");
-
-            WelcomeMessage = $"Goedemiddag, {displayName}";
-            ShowUploadButton = (userId == 2 || userId == 3 || userId == 4);
-            
-            RecommendedMusic = new ObservableCollection<MusicItem>
-            {
-                new MusicItem { Title="Summer Vibes", Artist="DJ X", Image="sample1.jpg" },
-                new MusicItem { Title="Chill Beats", Artist="LoFi Crew", Image="sample2.jpg" },
-                new MusicItem { Title="Workout Mix", Artist="Fit Beats", Image="sample3.jpg" }
-            };
-
-            PopularArtists = new ObservableCollection<ArtistItem>
-            {
-                new ArtistItem { Name="Artist 1", Image="artist1.png" },
-                new ArtistItem { Name="Artist 2", Image="Artist2.png" },
-                new ArtistItem { Name="Artist 3", Image="Artist3.png" }
-            };
+            LoadSongsCommand.Execute(null);
         }
-    }
 
-    public class MusicItem
-    {
-        public string Title { get; set; }
-        public string Artist { get; set; }
-        public string Image { get; set; }
-    }
+        [RelayCommand]
+        private async Task LoadSongs()
+        {
+            try
+            {
+                Songs.Clear();
+                var result = await _songService.GetAllSongsAsync();
+                foreach (var song in result)
+                {
+                    // API levert file_url, we maken hier absolute URL van
+                    if (!song.file_url.StartsWith("http"))
+                        song.file_url = "https://music.datadrive.be" + song.file_url;
 
-    public class ArtistItem
-    {
-        public string Name { get; set; }
-        public string Image { get; set; }
+                    Songs.Add(song);
+                }
+            }
+            catch (Exception ex)
+            {
+                Message = "Kon songs niet laden: " + ex.Message;
+            }
+        }
+
+        [RelayCommand]
+        private async Task PlaySong(Song song)
+        {
+            if (song == null) return;
+
+            await MediaElementService.Current.PlayAsync(song.file_url, song.title, song.artists);
+            CurrentSongTitle = song.title;
+            CurrentSongArtist = song.artists;
+            IsMiniPlayerVisible = true;
+        }
+
+        [RelayCommand]
+        private void TogglePlayPause()
+        {
+            Console.WriteLine("[MiniPlayer] TogglePlayPause triggered");
+            MediaElementService.Current.TogglePlayPause();
+        }
+
+        [RelayCommand]
+        private void StopSong()
+        {
+            Console.WriteLine("[MiniPlayer] StopSong triggered");
+            MediaElementService.Current.Stop();
+            IsMiniPlayerVisible = false;
+        }
     }
 }

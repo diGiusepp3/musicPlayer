@@ -1,121 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:MuziekApp.ViewModels"
              x:Class="MuziekApp.Views.MainView"
              Title="MuziekApp"
              BackgroundColor="#121212"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,*,Auto">
+
         <!-- Bovenbalk -->
-        <StackLayout Padding="20,40,20,10" Orientation="Horizontal" Spacing="10">
-            <Label Text="{Binding WelcomeMessage}"
-                   FontSize="28"
-                   TextColor="White"
-                   FontAttributes="Bold"
-                   VerticalOptions="Center"/>
-            <Image Source="profile.png"
-                   WidthRequest="40"
-                   HeightRequest="40"
-                   HorizontalOptions="EndAndExpand"
-                   Aspect="AspectFill"
-                   Margin="0,0,10,0"/>
-            <Button Text="Log uit" Clicked="OnLogoutClicked" />
-        </StackLayout>
+        <Grid Padding="20,40,20,10" ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
+            <Label Text="{Binding WelcomeMessage}" FontSize="28" TextColor="White" FontAttributes="Bold"
+                   Grid.Row="0" Grid.Column="0" VerticalOptions="Center"/>
+            <Image Source="profile.png" WidthRequest="40" HeightRequest="40"
+                   Grid.Row="0" Grid.Column="1" Aspect="AspectFill" Margin="0,0,10,0"/>
+            <Button Text="Log uit" Grid.Row="0" Grid.Column="2"
+                    Clicked="OnLogoutClicked" BackgroundColor="#1DB954" TextColor="White"/>
+            <SearchBar x:Name="SearchBarRef" Grid.Row="1" Grid.ColumnSpan="3"
+                       Placeholder="Zoek naar nummers, artiesten..."
+                       SearchCommand="{Binding SearchCommand}"
+                       SearchCommandParameter="{Binding Text, Source={x:Reference SearchBarRef}}" />
+        </Grid>
 
-        <!-- Hoofdcontent -->
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="25" Padding="20,0,20,100">
-                
-                <!-- Alleen zichtbaar voor user_id 2, 3, 4 -->
-                <Button Text="Upload Song"
-                        IsVisible="{Binding ShowUploadButton}"
-                        Clicked="OnUploadSongClicked"
-                        BackgroundColor="#1DB954"
-                        TextColor="White"/>
+        <!-- Lijst met liedjes -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Songs}" SelectionMode="None" Margin="20,0,20,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" ColumnDefinitions="80,*" BackgroundColor="#1E1E1E" Margin="0,0,0,10">
+                        <Frame HasShadow="False" Padding="0" CornerRadius="8" WidthRequest="70" HeightRequest="70">
+                            <Image Source="{Binding cover_url}" Aspect="AspectFill"/>
+                        </Frame>
+                        <VerticalStackLayout Grid.Column="1" Padding="10,0">
+                            <Label Text="{Binding title}" FontSize="18" FontAttributes="Bold" TextColor="White"/>
+                            <Label Text="{Binding artists}" FontSize="14" TextColor="Gray"/>
+                        </VerticalStackLayout>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=PlaySongCommand}" 
+                                                  CommandParameter="{Binding .}"/>
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-                <!-- Snelle navigatie -->
-                <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween">
-                    <Frame WidthRequest="150" HeightRequest="60" CornerRadius="8" BackgroundColor="#282828">
-                        <Label Text="Jouw Playlists" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    </Frame>
-                    <Frame WidthRequest="150" HeightRequest="60" CornerRadius="8" BackgroundColor="#282828">
-                        <Label Text="Podcasts" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    </Frame>
-                    <Frame WidthRequest="150" HeightRequest="60" CornerRadius="8" BackgroundColor="#282828">
-                        <Label Text="Favorieten" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center"/>
-                    </Frame>
-                </FlexLayout>
-
-                <!-- Aanbevolen -->
-                <Label Text="Aanbevolen voor jou"
-                       FontSize="22"
-                       TextColor="White"
-                       FontAttributes="Bold"/>
-
-                <CollectionView ItemsSource="{Binding RecommendedMusic}"
-                                ItemsLayout="HorizontalList"
-                                HeightRequest="200"
-                                Margin="0,0,0,20">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <VerticalStackLayout Spacing="5" WidthRequest="140">
-                                <Frame CornerRadius="8" IsClippedToBounds="True" Padding="0">
-                                    <Image Source="{Binding Image}" Aspect="AspectFill"/>
-                                </Frame>
-                                <Label Text="{Binding Title}" TextColor="White" FontSize="14" LineBreakMode="TailTruncation"/>
-                                <Label Text="{Binding Artist}" TextColor="#AAAAAA" FontSize="12" LineBreakMode="TailTruncation"/>
-                            </VerticalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-                <!-- Populaire artiesten -->
-                <Label Text="Populaire artiesten"
-                       FontSize="22"
-                       TextColor="White"
-                       FontAttributes="Bold"/>
-                <CollectionView ItemsSource="{Binding PopularArtists}"
-                                ItemsLayout="HorizontalList"
-                                HeightRequest="180">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <VerticalStackLayout WidthRequest="120" Spacing="5">
-                                <Frame CornerRadius="60" 
-                                       WidthRequest="120" 
-                                       HeightRequest="120" 
-                                       IsClippedToBounds="True"
-                                       Padding="0"
-                                       BackgroundColor="Transparent"
-                                       BorderColor="Transparent">
-                                    <Image Source="{Binding Image}" Aspect="AspectFill"/>
-                                </Frame>
-                                <Label Text="{Binding Name}" 
-                                       TextColor="White" 
-                                       HorizontalTextAlignment="Center"/>
-                            </VerticalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <!-- Onderbalk -->
-        <Grid BackgroundColor="#181818"
-              Padding="20,10"
-              VerticalOptions="End"
-              HeightRequest="60"
-              Grid.RowSpan="2">
+        <!-- MiniPlayer onderaan -->
+        <Grid Grid.Row="2" BackgroundColor="#181818" Padding="10" HeightRequest="60"
+              IsVisible="{Binding IsMiniPlayerVisible}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Image Source="home.png" Grid.Column="0" HorizontalOptions="Center"/>
-            <Image Source="search.png" Grid.Column="1" HorizontalOptions="Center"/>
-            <Image Source="library.png" Grid.Column="2" HorizontalOptions="Center"/>
+            <VerticalStackLayout Grid.Column="0">
+                <Label Text="{Binding CurrentSongTitle}" TextColor="White" FontAttributes="Bold"/>
+                <Label Text="{Binding CurrentSongArtist}" TextColor="Gray" FontSize="12"/>
+            </VerticalStackLayout>
+
+            <Button Grid.Column="1" Text="⏯"
+                    Command="{Binding TogglePlayPauseCommand}"
+                    BackgroundColor="#1DB954" TextColor="White" WidthRequest="50"/>
+            <Button Grid.Column="2" Text="⏹"
+                    Command="{Binding StopSongCommand}"
+                    BackgroundColor="#B22222" TextColor="White" WidthRequest="50"
+                    Margin="10,0,0,0"/>
         </Grid>
     </Grid>
 </ContentPage>

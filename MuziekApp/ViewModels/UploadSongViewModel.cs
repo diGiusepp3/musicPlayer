@@ -1,72 +1,105 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Storage;
 using MuziekApp.Services;
-using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Collections.ObjectModel;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace MuziekApp.ViewModels
 {
     public partial class UploadSongViewModel : ObservableObject
     {
+        private readonly HttpClient _httpClient = new() { BaseAddress = new Uri("https://music.datadrive.be/api/") };
+
+        [ObservableProperty] private int selectedAlbumId;
         [ObservableProperty] private string title;
-        [ObservableProperty] private string selectedFilePath;
+        [ObservableProperty] private int duration;
+        [ObservableProperty] private int trackNumber;
+        [ObservableProperty] private string audioUrl;
+        [ObservableProperty] private string filePath;
         [ObservableProperty] private string message;
 
-        [RelayCommand]
-        private async Task PickFile()
+        public ObservableCollection<AlbumItem> Albums { get; } = new();
+
+        public UploadSongViewModel()
         {
-            var customFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
-            {
-                { DevicePlatform.Android, new[] { "audio/mpeg" } },    // Android MIME type
-                { DevicePlatform.iOS, new[] { "public.mp3" } },        // iOS UTI
-                { DevicePlatform.WinUI, new[] { ".mp3" } },            // Windows
-                { DevicePlatform.MacCatalyst, new[] { "public.mp3" } },// Mac
-            });
+            LoadAlbumsCommand.Execute(null);
+        }
 
-            var result = await FilePicker.Default.PickAsync(new PickOptions
+        [RelayCommand]
+        private async Task LoadAlbums()
+        {
+            try
             {
-                PickerTitle = "Selecteer een MP3 bestand",
-                FileTypes = customFileType
-            });
-
-            if (result != null)
+                var albums = await _httpClient.GetFromJsonAsync<List<AlbumItem>>("albums/get_all.php");
+                Albums.Clear();
+                if (albums != null)
+                    foreach (var album in albums)
+                        Albums.Add(album);
+            }
+            catch
             {
-                SelectedFilePath = result.FullPath;
+                Message = "Kon albums niet laden.";
             }
         }
 
         [RelayCommand]
-        private async Task Upload()
+        private async Task UploadSong()
         {
-            if (string.IsNullOrWhiteSpace(Title) || string.IsNullOrWhiteSpace(SelectedFilePath))
-            {
-                Message = "Titel en bestand zijn verplicht.";
-                return;
-            }
-
             try
             {
-                using var httpClient = new HttpClient();
-                using var content = new MultipartFormDataContent();
-                content.Add(new StringContent(Title), "title");
-                content.Add(new StringContent("[1]"), "artists"); // voorbeeld: 1 = artist_id
-                content.Add(new StreamContent(File.OpenRead(SelectedFilePath))
+                var payload = new
                 {
-                    Headers =
-                    {
-                        ContentType = new MediaTypeHeaderValue("audio/mpeg")
-                    }
-                }, "file", Path.GetFileName(SelectedFilePath));
+                    album_id = SelectedAlbumId,
+                    title = Title,
+                    duration = Duration,
+                    track_number = TrackNumber,
+                    audio_url = AudioUrl,
+                    file_path = FilePath
+                };
 
-                var response = await httpClient.PostAsync("https://music.datadrive.be/api/songs/add_song.php", content);
-                var responseBody = await response.Content.ReadAsStringAsync();
+                var response = await _httpClient.PostAsJsonAsync("songs/add_song.php", payload);
+                var raw = await response.Content.ReadAsStringAsync();
+                var json = JsonSerializer.Deserialize<ApiResponse>(raw, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                Message = response.IsSuccessStatusCode ? "Upload gelukt!" : $"Fout: {responseBody}";
+                Message = json?.Status == "ok" ? "Song toegevoegd!" : "Fout bij toevoegen!";
             }
             catch (Exception ex)
             {
-                Message = $"Upload mislukt: {ex.Message}";
+                Message = "Fout: " + ex.Message;
+            }
+        }
+
+        public class AlbumItem
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
+        }
+
+        private class ApiResponse
+        {
+            public string Status { get; set; }
+        }
+        
+        [RelayCommand]
+        private async Task AddNewAlbum()
+        {
+            // Simpele dialoog voor nu, later kan dit een volledige view zijn
+            string result = await Shell.Current.DisplayPromptAsync("Nieuw Album", "Naam van het album:");
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                var payload = new { title = result };
+                var response = await _httpClient.PostAsJsonAsync("albums/add_album.php", payload);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    await LoadAlbums(); // lijst opnieuw laden
+                    Message = "Album toegevoegd!";
+                }
+                else
+                {
+                    Message = "Fout bij toevoegen album.";
+                }
             }
         }
     }

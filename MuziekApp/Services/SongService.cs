@@ -9,6 +9,7 @@ namespace MuziekApp.Services
         public string title { get; set; }
         public string artists { get; set; }
         public string file_url { get; set; }
+        public string cover_url { get; set; }  // <-- nieuw veld
     }
 
     public class SongResponse

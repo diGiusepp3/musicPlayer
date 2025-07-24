@@ -20,6 +20,12 @@
             <Picker ItemsSource="{Binding Albums}"
                     ItemDisplayBinding="{Binding Name}"
                     SelectedItem="{Binding SelectedAlbum}" />
+            
+            <!-- Nieuw album knop -->
+            <Button Text="Nieuw album toevoegen"
+                    BackgroundColor="#4040FF"
+                    TextColor="White"
+                    Command="{Binding AddNewAlbumCommand}" />
 
             <!-- Duur -->
             <Label Text="Duur (seconden)" />

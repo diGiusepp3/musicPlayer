@@ -108,5 +108,43 @@ namespace MuziekApp.Services
             [JsonPropertyName("user")]
             public User User { get; set; } 
         }
+        
+        public async Task<bool> AddSongAsync(int albumId, string title, int duration, int trackNumber, string audioUrl, string filePath)
+        {
+            try
+            {
+                var jsonContent = JsonContent.Create(new
+                {
+                    album_id = albumId,
+                    title,
+                    duration,
+                    track_number = trackNumber,
+                    audio_url = audioUrl,
+                    file_path = filePath
+                });
+
+                var response = await _httpClient.PostAsync("songs/add_song.php", jsonContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("AddSong HTTP error: " + response.StatusCode);
+                    return false;
+                }
+
+                var raw = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("ADD SONG RESPONSE RAW: " + raw);
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<ApiResponse>(raw, options);
+
+                return result?.Status == "ok";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("AddSong exception: " + ex.Message);
+                return false;
+            }
+        }
+        
     }
 }
