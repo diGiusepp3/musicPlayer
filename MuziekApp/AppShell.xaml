@@ -8,4 +8,8 @@
     <ShellContent Title="Main" 
                   ContentTemplate="{DataTemplate views:MainPage}" 
                   Route="MainPage" />
+    
+    <!-- LoginView -->
+    <ShellContent Title="Login" ContentTemplate="{DataTemplate views:LoginView}" />
+
 </Shell>

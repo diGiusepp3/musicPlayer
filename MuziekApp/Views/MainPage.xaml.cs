@@ -1,13 +1,22 @@
-﻿namespace MuziekApp.Views;
+﻿using MuziekApp.Services;
+
+namespace MuziekApp.Views;
 
 public partial class MainPage : ContentPage
 {
+    private readonly StartupCheckService _startupChecker;
+
     public MainPage()
     {
         InitializeComponent();
         Shell.SetNavBarIsVisible(this, false);
+
+        // Initialiseer StartupCheckService één keer
+        _startupChecker = new StartupCheckService();
+
         this.Loaded += async (s, e) =>
         {
+            // Animaties starten na laden
             await LogoImage.FadeTo(1, 1500, Easing.CubicIn);
             await LogoImage.ScaleTo(1.05, 300, Easing.CubicOut);
             await LogoImage.ScaleTo(1, 300, Easing.CubicIn);
@@ -20,17 +29,14 @@ public partial class MainPage : ContentPage
         };
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         MainContainer.TranslationX = 0;
-        
+
         // Start check pas NA het tekenen van de UI
-        _ = Task.Run(async () =>
-        {
-            var startupChecker = new StartupCheckService();
-            await startupChecker.RunCheckAsync();
-        });
+        await Task.Delay(500); // kleine delay om UI eerst te tonen
+        _ = _startupChecker.RunCheckAsync(); // fire & forget
     }
 
     private async Task AnimatePageOut()
@@ -49,6 +55,4 @@ public partial class MainPage : ContentPage
         await AnimatePageOut();
         await Shell.Current.GoToAsync(nameof(LoginView));
     }
-    
-    
 }

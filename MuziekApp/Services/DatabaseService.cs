@@ -14,6 +14,9 @@ namespace MuziekApp.Services
             };
         }
 
+        /// <summary>
+        /// Registreert een nieuwe gebruiker via de API.
+        /// </summary>
         public async Task<bool> RegisterUserAsync(string email, string password)
         {
             var response = await _httpClient.PostAsJsonAsync("register.php", new { email, password });
@@ -24,6 +27,9 @@ namespace MuziekApp.Services
             return result?.Status == "ok";
         }
 
+        /// <summary>
+        /// Logt een gebruiker in via de API.
+        /// </summary>
         public async Task<bool> LoginUserAsync(string email, string password)
         {
             var response = await _httpClient.PostAsJsonAsync("login.php", new { email, password });

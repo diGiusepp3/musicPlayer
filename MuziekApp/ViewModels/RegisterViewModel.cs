@@ -46,6 +46,6 @@ public partial class RegisterViewModel : ObservableObject
         }
 
         Message = "Registratie gelukt! Je wordt doorgestuurd...";
-        await Shell.Current.GoToAsync($"//{nameof(LoginView)}");
+        await Shell.Current.GoToAsync(nameof(LoginView));
     }
 }

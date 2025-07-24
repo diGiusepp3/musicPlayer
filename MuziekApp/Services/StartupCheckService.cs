@@ -1,25 +1,26 @@
-﻿using System.Net.Http.Json;
+﻿using MuziekApp.Services;
 
 namespace MuziekApp;
 
 public class StartupCheckService
 {
-    private readonly HttpClient _httpClient;
+    private readonly DatabaseService _databaseService;
 
     public StartupCheckService()
     {
-        _httpClient = new HttpClient
-        {
-            BaseAddress = new Uri("https://music.datadrive.be/api/")
-        };
+        _databaseService = new DatabaseService();
     }
 
+    /// <summary>
+    /// Voert de startcheck uit: internet + API + database.
+    /// </summary>
     public async Task<bool> RunCheckAsync()
     {
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<DbCheckResponse>("dbcheck.php");
-            if (response is not null && response.Status == "ok")
+            bool dbOk = await _databaseService.CheckConnectionAsync();
+
+            if (dbOk)
             {
                 await MainThread.InvokeOnMainThreadAsync(() =>
                     Application.Current.MainPage.DisplayAlert("Status", "Success (API + DB ok)", "OK"));
@@ -38,10 +39,5 @@ public class StartupCheckService
                 Application.Current.MainPage.DisplayAlert("Fout", $"API fout: {ex.Message}", "OK"));
             return false;
         }
-    }
-
-    private class DbCheckResponse
-    {
-        public string Status { get; set; }
     }
 }

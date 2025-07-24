@@ -74,6 +74,7 @@
         <DependentUpon>MainPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Remove="Views\MainView.cs" />
     </ItemGroup>
 
 </Project>

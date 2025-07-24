@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MuziekApp.Views.MainView"
+             Title="MuziekApp">
+
+    <ContentPage.Content>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Welkom bij MuziekApp!"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+            
+            <Label Text="Hier komt straks jouw muziekoverzicht en alle functies."
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"/>
+
+            <Button Text="Log uit"
+                    Clicked="OnLogoutClicked"
+                    HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -11,5 +11,6 @@ public partial class AppShell : Shell
         // Registreer routes
         Routing.RegisterRoute(nameof(LoginView), typeof(LoginView));
         Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
+        Routing.RegisterRoute(nameof(MainView), typeof(MainView));
     }
 }

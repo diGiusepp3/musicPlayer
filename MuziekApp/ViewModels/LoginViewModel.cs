@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MuziekApp.Services;
+using MuziekApp.Views;
 
 namespace MuziekApp.ViewModels;
 
@@ -21,6 +22,14 @@ public partial class LoginViewModel : ObservableObject
     private async Task Login()
     {
         var success = await _database.LoginUserAsync(Email, Password);
-        Message = success ? "Welkom!" : "Verkeerde gegevens!";
+        if (success)
+        {
+            Message = "Welkom!";
+            await Shell.Current.GoToAsync(nameof(MainView)); // route uit AppShell gebruiken
+        }
+        else
+        {
+            Message = "Verkeerde gegevens!";
+        }
     }
 }
