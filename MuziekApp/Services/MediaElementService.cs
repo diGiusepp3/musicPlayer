@@ -50,26 +50,18 @@ namespace MuziekApp.Services
 #if WINDOWS
                 try
                 {
-                    // Download naar cache
-                    var fileName = Path.GetFileName(url);
-                    var localPath = Path.Combine(FileSystem.CacheDirectory, fileName);
-
-                    using var http = new HttpClient();
-                    var data = await http.GetByteArrayAsync(url);
-                    await File.WriteAllBytesAsync(localPath, data);
-
-                    // Windows MediaPlayer
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(localPath));
+                    // Speel direct vanaf URL af
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(url));
                     _mediaPlayer.Volume = 1.0;
                     _mediaPlayer.Play();
-
-                    Console.WriteLine($"[MiniPlayer] Playing local file: {localPath}");
+                    Console.WriteLine($"[MiniPlayer] Playing remote: {url}");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("[MiniPlayer] Windows playback error: " + ex.Message);
                 }
 #endif
+
             }
             else
             {
