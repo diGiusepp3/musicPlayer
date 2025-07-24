@@ -1,6 +1,8 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MuziekApp.Models;
+
 
 namespace MuziekApp.Services
 {
@@ -103,16 +105,8 @@ namespace MuziekApp.Services
         private class LoginResponse
         {
             public string Status { get; set; }
-
             [JsonPropertyName("user")]
-            public User User { get; set; }
+            public User User { get; set; } 
         }
-    }
-
-    public class User
-    {
-        public int Id { get; set; }
-        public string Email { get; set; }
-        public bool IsPremium { get; set; }
     }
 }

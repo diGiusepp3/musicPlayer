@@ -1,0 +1,47 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MuziekApp.Views.UploadSongView"
+             Title="Nieuwe Song Uploaden">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Titel -->
+            <Entry Placeholder="Titel" Text="{Binding Title}" />
+
+            <!-- Artiesten -->
+            <Label Text="Artiest(en)" />
+            <Picker ItemsSource="{Binding Artists}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedArtist}" />
+
+            <!-- Album -->
+            <Label Text="Album" />
+            <Picker ItemsSource="{Binding Albums}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedAlbum}" />
+
+            <!-- Duur -->
+            <Label Text="Duur (seconden)" />
+            <Entry Placeholder="Duur in seconden" 
+                   Keyboard="Numeric" 
+                   Text="{Binding Duration}" />
+
+            <!-- Release datum -->
+            <Label Text="Release datum" />
+            <DatePicker Date="{Binding ReleaseDate}" />
+
+            <!-- MP3 bestand -->
+            <Label Text="{Binding SelectedFilePath}" FontSize="Small" />
+            <Button Text="Kies MP3 Bestand" Command="{Binding PickFileCommand}" />
+
+            <!-- Upload knop -->
+            <Button Text="Uploaden" 
+                    BackgroundColor="#1DB954" 
+                    TextColor="White" 
+                    Command="{Binding UploadCommand}" />
+
+            <Label Text="{Binding Message}" TextColor="Red" FontSize="Small" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,4 +1,5 @@
-﻿using MuziekApp.ViewModels;
+﻿using MuziekApp.Services;
+using MuziekApp.ViewModels;
 
 namespace MuziekApp.Views;
 
@@ -13,7 +14,13 @@ public partial class MainView : ContentPage
     private async void OnLogoutClicked(object sender, EventArgs e)
     {
         // Navigatie terug naar loginpagina
+        LocalStorageService.ClearUser(); // verwijder lokaal bestand
         await Shell.Current.GoToAsync(nameof(LoginView));
+    }
+    
+    private async void OnUploadSongClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(UploadSongView));
     }
     
     protected override void OnAppearing()

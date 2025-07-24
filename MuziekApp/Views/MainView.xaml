@@ -8,8 +8,8 @@
 
     <Grid RowDefinitions="Auto,*">
         <!-- Bovenbalk -->
-        <StackLayout Padding="20,40,20,10" Orientation="Horizontal">
-            <Label Text="Goedemiddag"
+        <StackLayout Padding="20,40,20,10" Orientation="Horizontal" Spacing="10">
+            <Label Text="{Binding WelcomeMessage}"
                    FontSize="28"
                    TextColor="White"
                    FontAttributes="Bold"
@@ -26,7 +26,15 @@
         <!-- Hoofdcontent -->
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="25" Padding="20,0,20,100">
-                <!-- Snelle navigatie (bijv. voor jouw mixen) -->
+                
+                <!-- Alleen zichtbaar voor user_id 2, 3, 4 -->
+                <Button Text="Upload Song"
+                        IsVisible="{Binding ShowUploadButton}"
+                        Clicked="OnUploadSongClicked"
+                        BackgroundColor="#1DB954"
+                        TextColor="White"/>
+
+                <!-- Snelle navigatie -->
                 <FlexLayout Wrap="Wrap" JustifyContent="SpaceBetween">
                     <Frame WidthRequest="150" HeightRequest="60" CornerRadius="8" BackgroundColor="#282828">
                         <Label Text="Jouw Playlists" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center"/>

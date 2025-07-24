@@ -7,9 +7,17 @@ namespace MuziekApp.ViewModels
     {
         [ObservableProperty] private ObservableCollection<MusicItem> recommendedMusic;
         [ObservableProperty] private ObservableCollection<ArtistItem> popularArtists;
+        [ObservableProperty] private string welcomeMessage;
+        [ObservableProperty] private bool showUploadButton;
 
         public MainViewModel()
         {
+            var userId = Preferences.Get("user_id", 0);
+            var displayName = Preferences.Get("display_name", "User");
+
+            WelcomeMessage = $"Goedemiddag, {displayName}";
+            ShowUploadButton = (userId == 2 || userId == 3 || userId == 4);
+            
             RecommendedMusic = new ObservableCollection<MusicItem>
             {
                 new MusicItem { Title="Summer Vibes", Artist="DJ X", Image="sample1.jpg" },

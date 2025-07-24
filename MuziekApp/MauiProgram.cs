@@ -26,6 +26,9 @@ public static class MauiProgram
         builder.Services.AddTransient<RegisterView>();
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddTransient<MainView>();
+        builder.Services.AddTransient<UploadSongViewModel>();
+        builder.Services.AddTransient<UploadSongView>();
+
 
 
 #if DEBUG
