@@ -12,8 +12,8 @@
         <ApplicationTitle>Listen!</ApplicationTitle>
         <ApplicationId>be.webcrafters.listen</ApplicationId>
 
-        <ApplicationDisplayVersion>0.00.01</ApplicationDisplayVersion>
-        <ApplicationVersion>1</ApplicationVersion>
+        <ApplicationDisplayVersion>0.00.02</ApplicationDisplayVersion>
+        <ApplicationVersion>2</ApplicationVersion>
 
         <WindowsPackageType>None</WindowsPackageType>
 

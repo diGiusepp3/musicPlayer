@@ -1,19 +1,19 @@
 ﻿using MuziekApp.Services;
+using Microsoft.Extensions.Logging;
 
 namespace MuziekApp;
 
 public class StartupCheckService
 {
     private readonly DatabaseService _databaseService;
+    private readonly ILogger<StartupCheckService> _logger;
 
-    public StartupCheckService()
+    public StartupCheckService(ILogger<StartupCheckService> logger)
     {
         _databaseService = new DatabaseService();
+        _logger = logger;
     }
 
-    /// <summary>
-    /// Voert de startcheck uit: internet + API + database.
-    /// </summary>
     public async Task<bool> RunCheckAsync()
     {
         try
@@ -22,21 +22,18 @@ public class StartupCheckService
 
             if (dbOk)
             {
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                    Application.Current.MainPage.DisplayAlert("Status", "Success (API + DB ok)", "OK"));
+                _logger.LogInformation("Startup check success (API + DB OK)");
                 return true;
             }
             else
             {
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                    Application.Current.MainPage.DisplayAlert("Status", "No success (API of DB error)", "OK"));
+                _logger.LogWarning("Startup check failed (API of DB error)");
                 return false;
             }
         }
         catch (Exception ex)
         {
-            await MainThread.InvokeOnMainThreadAsync(() =>
-                Application.Current.MainPage.DisplayAlert("Fout", $"API fout: {ex.Message}", "OK"));
+            _logger.LogError(ex, "Startup check API fout: {Message}", ex.Message);
             return false;
         }
     }

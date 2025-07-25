@@ -6,17 +6,16 @@ public partial class MainPage : ContentPage
 {
     private readonly StartupCheckService _startupChecker;
 
-    public MainPage()
+    // Injectie via constructor
+    public MainPage(StartupCheckService startupChecker)
     {
         InitializeComponent();
         Shell.SetNavBarIsVisible(this, false);
 
-        // Initialiseer StartupCheckService één keer
-        _startupChecker = new StartupCheckService();
+        _startupChecker = startupChecker;
 
         this.Loaded += async (s, e) =>
         {
-            // Animaties starten na laden
             await LogoImage.FadeTo(1, 1500, Easing.CubicIn);
             await LogoImage.ScaleTo(1.05, 300, Easing.CubicOut);
             await LogoImage.ScaleTo(1, 300, Easing.CubicIn);
@@ -34,8 +33,7 @@ public partial class MainPage : ContentPage
         base.OnAppearing();
         MainContainer.TranslationX = 0;
 
-        // Start check pas NA het tekenen van de UI
-        await Task.Delay(500); // kleine delay om UI eerst te tonen
+        await Task.Delay(500); 
         _ = _startupChecker.RunCheckAsync(); // fire & forget
     }
 
@@ -55,4 +53,5 @@ public partial class MainPage : ContentPage
         await AnimatePageOut();
         await Shell.Current.GoToAsync(nameof(LoginView));
     }
+    
 }

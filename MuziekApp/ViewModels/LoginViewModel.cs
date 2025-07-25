@@ -2,43 +2,45 @@
 using CommunityToolkit.Mvvm.Input;
 using MuziekApp.Services;
 using MuziekApp.Views;
+using MuziekApp.Models;   // <- toegevoegd zodat User herkend wordt
 
-namespace MuziekApp.ViewModels
+namespace MuziekApp.ViewModels;
+
+public partial class LoginViewModel : ObservableObject
 {
-    public partial class LoginViewModel : ObservableObject
+    private readonly DatabaseService _database;
+
+    [ObservableProperty] private string email;
+    [ObservableProperty] private string password;
+    [ObservableProperty] private string message;
+
+    public LoginViewModel(DatabaseService database)
     {
-        private readonly DatabaseService _database;
+        _database = database;
+    }
 
-        [ObservableProperty] private string email = string.Empty;
-        [ObservableProperty] private string password = string.Empty;
-        [ObservableProperty] private string message = string.Empty;
+    [RelayCommand]
+    private async Task Login()
+    {
+        Message = string.Empty;
 
-        public LoginViewModel(DatabaseService database)
+        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
-            _database = database;
+            Message = "Vul alle velden in.";
+            return;
         }
 
-        [RelayCommand]
-        private async Task Login()
+        var user = await _database.LoginAndGetUserAsync(Email, Password);
+        if (user == null)
         {
-            var user = await _database.LoginAndGetUserAsync(Email, Password);
-            if (user == null)
-            {
-                Message = "Verkeerde gegevens!";
-                return;
-            }
-
-            // Opslaan in lokaal JSON-bestand
-            LocalStorageService.SaveUser(new UserData
-            {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                Email = user.Email,
-                Premium = user.Premium
-            });
-
-            Message = $"Welkom {user.DisplayName}!";
-            await Shell.Current.GoToAsync($"{nameof(MainView)}");
+            Message = "Verkeerde gegevens!";
+            return;
         }
+
+        // Sla gebruiker lokaal op via REST
+        LocalStorageService.SaveUser(user);
+
+        Message = $"Welkom {user.DisplayName}!";
+        await Shell.Current.GoToAsync($"//{nameof(MainView)}");
     }
 }

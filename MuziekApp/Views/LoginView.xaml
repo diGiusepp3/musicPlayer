@@ -2,26 +2,72 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MuziekApp.Views.LoginView"
-             Title="Login">
+             BackgroundColor="#0D1B2A">
 
-    <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="{StaticResource BackgroundGradientStart}" Offset="0.0" />
-            <GradientStop Color="{StaticResource BackgroundGradientEnd}" Offset="1.0" />
-        </LinearGradientBrush>
-    </ContentPage.Background>
+    <ContentPage.Resources>
+        <Style TargetType="Button">
+            <Setter Property="HeightRequest" Value="50"/>
+            <Setter Property="CornerRadius" Value="25"/>
+            <Setter Property="BackgroundColor" Value="#1DB954"/>
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="Margin" Value="0,15"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+        </Style>
+    </ContentPage.Resources>
 
-    <VerticalStackLayout Spacing="20" Padding="20">
-        <Label Text="Inloggen"
-               FontSize="30"
-               HorizontalOptions="Center"
-               TextColor="White" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Entry Placeholder="E-mail" Text="{Binding Email}" />
-        <Entry Placeholder="Wachtwoord" IsPassword="True" Text="{Binding Password}" />
+        <!-- Logo en Titel -->
+        <VerticalStackLayout Grid.Row="0"
+                             VerticalOptions="End"
+                             Spacing="10"
+                             Padding="30,0">
+            <Image Source="logo.png" HeightRequest="120" HorizontalOptions="Center"/>
+            <Label Text="Listen!" FontSize="32" HorizontalOptions="Center" FontAttributes="Bold"/>
+            <Label Text="Millions of songs in reach" FontSize="16" HorizontalOptions="Center" TextColor="LightGray"/>
+        </VerticalStackLayout>
 
-        <Button Text="Inloggen" Command="{Binding LoginCommand}" />
+        <!-- Login Formulier -->
+        <VerticalStackLayout Grid.Row="1"
+                             VerticalOptions="Center"
+                             Spacing="15"
+                             Padding="30,20">
 
-        <Label Text="{Binding Message}" TextColor="Red" />
-    </VerticalStackLayout>
+            <!-- Email -->
+            <Frame Padding="10" CornerRadius="12" BackgroundColor="White" HasShadow="False">
+                <Entry Placeholder="Email" 
+                       Text="{Binding Email}" 
+                       Keyboard="Email" 
+                       TextColor="Black"
+                       PlaceholderColor="#999" />
+            </Frame>
+
+            <!-- Password -->
+            <Frame Padding="10" CornerRadius="12" BackgroundColor="White" HasShadow="False">
+                <Entry Placeholder="Password" 
+                       Text="{Binding Password}" 
+                       IsPassword="True" 
+                       TextColor="Black"
+                       PlaceholderColor="#999" />
+            </Frame>
+
+            <Button Text="Log in" Command="{Binding LoginCommand}"/>
+            <Label Text="{Binding Message}" TextColor="Red" FontSize="14" HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+
+        <!-- Onderkant (Registreren) -->
+        <StackLayout Grid.Row="2" VerticalOptions="Start" HorizontalOptions="Center" Padding="0,20">
+            <Label Text="Don't have an account?" FontSize="14" HorizontalOptions="Center"/>
+            <Button Text="Register" BackgroundColor="Transparent" TextColor="#1DB954"
+                    Command="{Binding NavigateToRegisterCommand}"/>
+        </StackLayout>
+    </Grid>
 </ContentPage>

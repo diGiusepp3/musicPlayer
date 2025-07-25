@@ -31,12 +31,34 @@
                     Clicked="OnLogoutClicked"
                     BackgroundColor="#1DB954"
                     TextColor="White"/>
+            <!-- Zoekbalk -->
             <SearchBar x:Name="SearchBarRef"
                        Grid.Row="1"
                        Grid.ColumnSpan="3"
-                       Placeholder="Zoek naar nummers, artiesten..."
-                       SearchCommand="{Binding SearchCommand}"
-                       SearchCommandParameter="{Binding Text, Source={x:Reference SearchBarRef}}" />
+                       Placeholder="Search for songs, artists, playlists..."
+                       Text="{Binding SearchText, Mode=TwoWay}"
+                       SearchCommand="{Binding SearchAsyncCommand}" />
+
+            <!-- Zoekresultaten dropdown -->
+            <CollectionView ItemsSource="{Binding SearchResults}"
+                            IsVisible="{Binding IsSearchResultsVisible}"
+                            HeightRequest="200"
+                            BackgroundColor="#222">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" HasShadow="False" BackgroundColor="Transparent">
+                            <Label Text="{Binding Title}" 
+                                   TextColor="White" 
+                                   FontSize="14">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=OpenVideoCommand}" 
+                                                          CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </Grid>
 
         <!-- Hoofdinhoud -->
@@ -87,19 +109,12 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid Padding="5" ColumnDefinitions="60,*,Auto" BackgroundColor="#1E1E1E" Margin="0,0,0,5">
-                                <!-- Afbeelding -->
                                 <Image Source="{Binding cover_url}" WidthRequest="50" HeightRequest="50" Aspect="AspectFill"/>
-
-                                <!-- Song info -->
                                 <VerticalStackLayout Grid.Column="1">
                                     <Label Text="{Binding title}" TextColor="White" FontSize="16"/>
                                     <Label Text="{Binding artists}" TextColor="Gray" FontSize="12"/>
                                 </VerticalStackLayout>
-
-                                <!-- Duration -->
                                 <Label Text="{Binding duration}" TextColor="Gray" FontSize="14" Grid.Column="2"/>
-
-                                <!-- Tap gesture -->
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=PlaySongCommand}" 
                                                           CommandParameter="{Binding .}"/>
@@ -108,7 +123,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
 
             </VerticalStackLayout>
         </ScrollView>
@@ -121,29 +135,41 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
+            <!-- Play/Pause -->
+            <ImageButton Grid.Row="0" Grid.Column="0"
+                         Source="{Binding PlayPauseIcon}"
+                         Command="{Binding TogglePlayPauseCommand}"
+                         BackgroundColor="Transparent"
+                         WidthRequest="40" HeightRequest="40"/>
+
             <!-- Song info -->
-            <VerticalStackLayout Grid.Row="0" Grid.Column="0">
-                <Label Text="{Binding CurrentSongTitle}" TextColor="White" FontAttributes="Bold"/>
+            <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="0" Padding="5,0">
+                <Label Text="{Binding CurrentSongTitle}" TextColor="White" FontAttributes="Bold" FontSize="14"/>
                 <Label Text="{Binding CurrentSongArtist}" TextColor="Gray" FontSize="12"/>
             </VerticalStackLayout>
 
-            <!-- Buttons -->
-            <Button Grid.Row="0" Grid.Column="1" Text="⏯"
-                    Command="{Binding TogglePlayPauseCommand}"
-                    BackgroundColor="#1DB954" TextColor="White" WidthRequest="50"/>
-            <Button Grid.Row="0" Grid.Column="2" Text="⏹"
-                    Command="{Binding StopSongCommand}"
-                    BackgroundColor="#B22222" TextColor="White" WidthRequest="50"
-                    Margin="10,0,0,0"/>
+            <!-- Next -->
+            <ImageButton Grid.Row="0" Grid.Column="2"
+                         Source="icon_next.svg"
+                         Command="{Binding PlayNextCommand}"
+                         BackgroundColor="Transparent"
+                         WidthRequest="40" HeightRequest="40"/>
+
+            <!-- Shuffle -->
+            <ImageButton Grid.Row="0" Grid.Column="3"
+                         Source="icon_shuffle.svg"
+                         Command="{Binding ToggleShuffleCommand}"
+                         BackgroundColor="Transparent"
+                         WidthRequest="40" HeightRequest="40"/>
 
             <!-- Voortgangsbalk -->
-            <Slider x:Name="ProgressSlider" 
-                    Grid.Row="1" Grid.ColumnSpan="3"
+            <Slider x:Name="ProgressSlider" Grid.Row="1" Grid.ColumnSpan="4"
                     Minimum="0"
                     Maximum="{Binding CurrentSongDuration}"
                     Value="{Binding CurrentSongPosition, Mode=TwoWay}"

@@ -6,6 +6,7 @@ namespace MuziekApp.Views
     public partial class MainView : ContentPage
     {
         private readonly IDispatcherTimer _timer = Application.Current.Dispatcher.CreateTimer();
+        private MainViewModel ViewModel => BindingContext as MainViewModel;
 
         public MainView(MainViewModel vm)
         {
@@ -19,11 +20,7 @@ namespace MuziekApp.Views
             Shell.SetNavBarIsVisible(this, false);
 
             _timer.Interval = TimeSpan.FromMilliseconds(500);
-            _timer.Tick += (s, e) =>
-            {
-                ProgressSlider.Maximum = MediaElementService.Current.Duration.TotalSeconds;
-                ProgressSlider.Value = MediaElementService.Current.Position.TotalSeconds;
-            };
+            _timer.Tick += (s, e) => ViewModel?.UpdatePosition();
             _timer.Start();
         }
 

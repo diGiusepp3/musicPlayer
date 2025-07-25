@@ -41,5 +41,10 @@ out/
 
 # Public html
 *.inc
-ini.inc
+*/ini.inc
+public_html/api/
+*/users
+*/cookies.txt
 public_html/
+
+*/MuziekApp.csproj

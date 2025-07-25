@@ -8,12 +8,12 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        MainPage = new AppShell();
-
         LocalStorageService.Initialize();
 
-        // Start navigatie pas nadat de UI klaar is
-        MainPage.NavigatedTo += async (s, e) => await HandleStartupNavigation();
+        MainPage = new AppShell();
+
+        // Dispatcher gebruiken zodat Shell klaar is
+        MainPage.Dispatcher.Dispatch(async () => await HandleStartupNavigation());
     }
 
     private async Task HandleStartupNavigation()
@@ -24,24 +24,17 @@ public partial class App : Application
             if (savedUser != null)
             {
                 Console.WriteLine($"[USER] {savedUser.DisplayName} is al ingelogd → Direct naar MainView");
-                if (Shell.Current != null)
-                    await Shell.Current.GoToAsync($"{nameof(MainView)}");
+                await Shell.Current.GoToAsync($"{nameof(MainView)}", true);
             }
             else
             {
                 Console.WriteLine("[USER] Geen user.json gevonden → Naar LoginView");
-                if (Shell.Current != null)
-                    await Shell.Current.GoToAsync($"//{nameof(LoginView)}");
+                await Shell.Current.GoToAsync($"{nameof(LoginView)}", true);
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine("[ERROR] Navigatie fout: " + ex.Message);
-        }
-        finally
-        {
-            // Zorg dat dit maar één keer gebeurt
-            MainPage.NavigatedTo -= async (s, e) => await HandleStartupNavigation();
         }
     }
 }

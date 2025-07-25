@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bovenste boog -->
+    <path d="M8 16 C20 16, 28 24, 36 32" />
+    <polyline points="36 24 44 32 36 40" />
+
+    <!-- Onderste boog -->
+    <path d="M8 48 C20 48, 28 40, 36 32" />
+    <polyline points="36 40 44 32 36 24" />
+</svg>

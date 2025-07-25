@@ -1,153 +1,157 @@
-﻿using Plugin.Maui.Audio;
+﻿using MuziekApp.ViewModels;
+using Plugin.Maui.Audio;
 #if WINDOWS
 using Windows.Media.Playback;
 using Windows.Media.Core;
 #endif
 
-namespace MuziekApp.Services
+namespace MuziekApp.Services;
+
+public class MediaElementService
 {
-    public class MediaElementService
+    private static MediaElementService? _current;
+    public static MediaElementService Current => _current ??= new MediaElementService();
+
+    private readonly IAudioManager _audioManager;
+    private IAudioPlayer? _player;
+
+#if WINDOWS
+    private static MediaPlayer? _mediaPlayer;
+#endif
+
+    private List<PlaylistSong> _playlist = new();
+    private int _currentIndex = -1;
+
+    public string CurrentTitle { get; private set; } = "";
+    public string CurrentArtist { get; private set; } = "";
+
+    // === EVENT OM VIEWMODEL TE INFORMEREN ===
+    public event Action<string, string>? OnSongChanged;
+
+    public bool IsPlaying =>
+#if WINDOWS
+        _mediaPlayer?.CurrentState == MediaPlayerState.Playing;
+#else
+        _player?.IsPlaying ?? false;
+#endif
+
+    private MediaElementService()
     {
-        private static MediaElementService? _current;
-        public static MediaElementService Current => _current ??= new MediaElementService();
-
-        private readonly IAudioManager _audioManager;
-        private IAudioPlayer? _player;
-
+        _audioManager = AudioManager.Current;
 #if WINDOWS
-        private static MediaPlayer? _mediaPlayer;
+        _mediaPlayer ??= new MediaPlayer();
+        _mediaPlayer.MediaEnded += (s, e) => PlayNext();
 #endif
+    }
 
-        public string CurrentTitle { get; private set; } = "";
-        public string CurrentArtist { get; private set; } = "";
+    public void SetPlaylist(IEnumerable<PlaylistSong> songs)
+    {
+        _playlist = songs.ToList();
+        _currentIndex = -1;
+    }
 
-        public bool IsPlaying =>
-#if WINDOWS
-            _mediaPlayer?.CurrentState == MediaPlayerState.Playing;
-#else
-            _player?.IsPlaying ?? false;
-#endif
+    public async Task PlayAsync(string url, string title = "", string artist = "")
+    {
+        Stop();
+        CurrentTitle = title;
+        CurrentArtist = artist;
 
-        private MediaElementService()
+        // Event trigger
+        OnSongChanged?.Invoke(CurrentTitle, CurrentArtist);
+
+        if (DeviceInfo.Platform == DevicePlatform.WinUI)
         {
-            _audioManager = AudioManager.Current;
 #if WINDOWS
-            _mediaPlayer ??= new MediaPlayer();
+            _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(url));
+            _mediaPlayer.Volume = 1.0;
+            _mediaPlayer.Play();
 #endif
         }
-
-        /// <summary>
-        /// Speelt een nummer af vanaf een URL en slaat titel/artist op.
-        /// </summary>
-        public async Task PlayAsync(string url, string title = "", string artist = "")
+        else
         {
-            Stop();
-            CurrentTitle = title;
-            CurrentArtist = artist;
+            using var httpClient = new HttpClient();
+            var data = await httpClient.GetByteArrayAsync(url);
+            var stream = new MemoryStream(data);
+            _player = _audioManager.CreatePlayer(stream);
 
-            if (DeviceInfo.Platform == DevicePlatform.WinUI)
-            {
-#if WINDOWS
-                try
-                {
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(url));
-                    _mediaPlayer.Volume = 1.0;
-                    _mediaPlayer.Play();
-                    Console.WriteLine($"[MiniPlayer] Playing remote: {url}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("[MiniPlayer] Windows playback error: " + ex.Message);
-                }
-#endif
-            }
-            else
-            {
-                using var httpClient = new HttpClient();
-                var data = await httpClient.GetByteArrayAsync(url);
-                var stream = new MemoryStream(data);
-                _player = _audioManager.CreatePlayer(stream);
-                _player.Play();
-            }
-        }
-
-        public void TogglePlayPause()
-        {
-            if (DeviceInfo.Platform == DevicePlatform.WinUI)
-            {
-#if WINDOWS
-                if (_mediaPlayer == null) return;
-                if (_mediaPlayer.CurrentState == MediaPlayerState.Playing)
-                    _mediaPlayer.Pause();
-                else
-                    _mediaPlayer.Play();
-#endif
-            }
-            else
-            {
-                if (_player == null) return;
-                if (_player.IsPlaying) _player.Pause();
-                else _player.Play();
-            }
-        }
-
-        public void Stop()
-        {
-            if (DeviceInfo.Platform == DevicePlatform.WinUI)
-            {
-#if WINDOWS
-                _mediaPlayer?.Pause();
-#endif
-            }
-            else
-            {
-                _player?.Stop();
-                _player = null;
-            }
-        }
-
-        /// <summary>
-        /// Totale lengte van het nummer.
-        /// </summary>
-        public TimeSpan Duration
-        {
-            get
-            {
-#if WINDOWS
-                return _mediaPlayer != null ? _mediaPlayer.NaturalDuration : TimeSpan.Zero;
-#else
-                return _player != null ? TimeSpan.FromSeconds(_player.Duration) : TimeSpan.Zero;
-#endif
-            }
-        }
-
-        /// <summary>
-        /// Huidige positie van het nummer.
-        /// </summary>
-        public TimeSpan Position
-        {
-            get
-            {
-#if WINDOWS
-                return _mediaPlayer?.Position ?? TimeSpan.Zero;
-#else
-                return _player != null ? TimeSpan.FromSeconds(_player.CurrentPosition) : TimeSpan.Zero;
-#endif
-            }
-        }
-
-        /// <summary>
-        /// Spring naar een specifieke tijd in het nummer.
-        /// </summary>
-        public void Seek(TimeSpan position)
-        {
-#if WINDOWS
-            if (_mediaPlayer != null)
-                _mediaPlayer.Position = position;
-#else
-            if (_player != null)
-                _player.Seek(position.TotalSeconds); // <-- double verwacht
-#endif
+            // === Autoplay event voor Android/iOS ===
+            _player.PlaybackEnded += (s, e) => PlayNext();
+            _player.Play();
         }
     }
+
+    public async Task PlayNext()
+    {
+        if (_playlist.Count == 0) return;
+
+        // Shuffle staat in service zelf niet bekend, we doen hier alleen de index
+        _currentIndex++;
+        if (_currentIndex >= _playlist.Count) _currentIndex = 0;
+
+        var song = _playlist[_currentIndex];
+        await PlayAsync(song.AudioUrl, song.Title, song.Artist);
+    }
+
+
+
+    public void TogglePlayPause()
+    {
+        if (DeviceInfo.Platform == DevicePlatform.WinUI)
+        {
+#if WINDOWS
+            if (_mediaPlayer == null) return;
+            if (_mediaPlayer.CurrentState == MediaPlayerState.Playing)
+                _mediaPlayer.Pause();
+            else
+                _mediaPlayer.Play();
+#endif
+        }
+        else
+        {
+            if (_player == null) return;
+            if (_player.IsPlaying) _player.Pause();
+            else _player.Play();
+        }
+    }
+
+    public void Stop()
+    {
+        if (DeviceInfo.Platform == DevicePlatform.WinUI)
+        {
+#if WINDOWS
+            _mediaPlayer?.Pause();
+#endif
+        }
+        else
+        {
+            _player?.Stop();
+            _player = null;
+        }
+    }
+
+    public TimeSpan Duration =>
+#if WINDOWS
+        _mediaPlayer != null ? _mediaPlayer.NaturalDuration : TimeSpan.Zero;
+#else
+        _player != null ? TimeSpan.FromSeconds(_player.Duration) : TimeSpan.Zero;
+#endif
+
+    public TimeSpan Position =>
+#if WINDOWS
+        _mediaPlayer?.Position ?? TimeSpan.Zero;
+#else
+        _player != null ? TimeSpan.FromSeconds(_player.CurrentPosition) : TimeSpan.Zero;
+#endif 
+
+    public void Seek(TimeSpan position)
+    {
+#if WINDOWS
+        if (_mediaPlayer != null)
+            _mediaPlayer.Position = position;
+#else
+        _player?.Seek(position.TotalSeconds);
+#endif
+    }
 }
+
+public record PlaylistSong(string Title, string Artist, string AudioUrl);

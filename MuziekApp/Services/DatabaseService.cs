@@ -26,9 +26,10 @@ namespace MuziekApp.Services
         {
             public string Status { get; set; }
             [JsonPropertyName("user")]
-            public User User { get; set; } 
+            public User User { get; set; }
         }
 
+        // === CONNECTIE TEST ===
         public async Task<bool> CheckConnectionAsync()
         {
             try
@@ -43,6 +44,7 @@ namespace MuziekApp.Services
             }
         }
 
+        // === REGISTER ===
         public async Task<bool> RegisterUserAsync(string email, string password)
         {
             try
@@ -71,6 +73,7 @@ namespace MuziekApp.Services
             }
         }
 
+        // === LOGIN ===
         public async Task<User?> LoginAndGetUserAsync(string email, string password)
         {
             try
@@ -99,6 +102,7 @@ namespace MuziekApp.Services
             }
         }
 
+        // === SONG TOEVOEGEN ===
         public async Task<bool> AddSongAsync(int albumId, string title, int duration, int trackNumber, string audioUrl, string filePath)
         {
             try
@@ -136,7 +140,32 @@ namespace MuziekApp.Services
             }
         }
 
-        // ========== NIEUW ==========
+        // === YOUTUBE DOWNLOAD ===
+        public async Task<bool> DownloadFromYouTubeAsync(string searchQuery)
+        {
+            try
+            {
+                var jsonContent = JsonContent.Create(new { url = searchQuery, type = "audio" });
+                var response = await _httpClient.PostAsync("functions/download.php?single=1", jsonContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("YT Download HTTP error: " + response.StatusCode);
+                    return false;
+                }
+
+                var raw = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("YT DOWNLOAD RAW: " + raw);
+                return raw.Contains("id");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("YT Download exception: " + ex.Message);
+                return false;
+            }
+        }
+
+        // === ALLE SONGS ===
         public async Task<List<Song>> GetAllSongsAsync()
         {
             try
@@ -178,5 +207,29 @@ namespace MuziekApp.Services
                 return new List<Album>();
             }
         }
+        
+        public async Task<List<SearchResultItem>> SearchYouTubeAsync(string query)
+        {
+            try
+            {
+                var jsonContent = JsonContent.Create(new { query });
+                var response = await _httpClient.PostAsync("functions/search_youtube.php", jsonContent);
+
+                if (!response.IsSuccessStatusCode)
+                    return new List<SearchResultItem>();
+
+                var raw = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("SEARCH RESPONSE RAW: " + raw);
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<List<SearchResultItem>>(raw, options) ?? new List<SearchResultItem>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Search exception: " + ex.Message);
+                return new List<SearchResultItem>();
+            }
+        }
+
     }
 }

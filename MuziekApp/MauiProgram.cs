@@ -30,6 +30,8 @@ public static class MauiProgram
         builder.Services.AddTransient<UploadSongView>();
         builder.Services.AddTransient<AllMusicViewModel>();
         builder.Services.AddTransient<AllMusicPage>();
+        builder.Services.AddSingleton<StartupCheckService>();
+
 
 
 
