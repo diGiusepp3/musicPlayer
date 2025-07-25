@@ -12,7 +12,7 @@
         <ApplicationTitle>Listen!</ApplicationTitle>
         <ApplicationId>be.webcrafters.listen</ApplicationId>
 
-        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+        <ApplicationDisplayVersion>0.00.01</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
         <WindowsPackageType>None</WindowsPackageType>
@@ -37,6 +37,8 @@
         <AndroidSigningKeyAlias>listen</AndroidSigningKeyAlias>
         <AndroidSigningKeyPass>DigiuSeppe2018___</AndroidSigningKeyPass>
         <AndroidSigningStorePass>DigiuSeppe2018___</AndroidSigningStorePass>
+        <AndroidPackageFormat>aab</AndroidPackageFormat>
+        <PublishDir>$(MSBuildProjectDirectory)\apk\</PublishDir>
     </PropertyGroup>
 
 
