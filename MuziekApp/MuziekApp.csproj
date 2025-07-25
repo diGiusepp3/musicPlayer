@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <!-- Alleen Windows build -->
-        <TargetFrameworks>net9.0-windows10.0.19041.0</TargetFrameworks>
+        <TargetFrameworks>net9.0-windows10.0.19041.0;net9.0-android</TargetFrameworks>
         <OutputType>Exe</OutputType>
         <RootNamespace>MuziekApp</RootNamespace>
         <UseMaui>true</UseMaui>
@@ -10,27 +9,37 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
-        <!-- Display name -->
-        <ApplicationTitle>MuziekApp</ApplicationTitle>
+        <ApplicationTitle>Listen!</ApplicationTitle>
+        <ApplicationId>be.webcrafters.listen</ApplicationId>
 
-        <!-- App Identifier -->
-        <ApplicationId>com.companyname.muziekapp</ApplicationId>
-
-        <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
-        <!-- Windows packaging -->
         <WindowsPackageType>None</WindowsPackageType>
 
-        <!-- Supported OS Versions -->
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
             10.0.17763.0
         </SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
             10.0.17763.0
         </TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+            21.0
+        </SupportedOSPlatformVersion>
+
+        <!-- Eigen APK folder -->
+        <AndroidPackageFormat>apk</AndroidPackageFormat>
+        <PublishDir>$(MSBuildProjectDirectory)\apk\</PublishDir>
+
+        <!-- Signing voor Google Play -->
+        <AndroidKeyStore>true</AndroidKeyStore>
+        <AndroidSigningKeyStore>$(MSBuildProjectDirectory)\listen.keystore</AndroidSigningKeyStore>
+        <AndroidSigningKeyAlias>listen</AndroidSigningKeyAlias>
+        <AndroidSigningKeyPass>DigiuSeppe2018___</AndroidSigningKeyPass>
+        <AndroidSigningStorePass>DigiuSeppe2018___</AndroidSigningStorePass>
     </PropertyGroup>
+
+
 
     <ItemGroup>
         <!-- App Icon -->
@@ -65,23 +74,23 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Views\LoginView.xaml" />
-      <AdditionalFiles Include="Views\MainPage.xaml" />
-      <AdditionalFiles Include="Views\RegisterView.xaml" />
+        <AdditionalFiles Include="Views\LoginView.xaml" />
+        <AdditionalFiles Include="Views\MainPage.xaml" />
+        <AdditionalFiles Include="Views\RegisterView.xaml" />
     </ItemGroup>
 
     <ItemGroup>
-      <MauiXaml Update="Views\MainPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
+        <MauiXaml Update="Views\MainPage.xaml">
+            <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Views\MainPage.xaml.cs">
-        <DependentUpon>MainPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Remove="Views\MainView.cs" />
+        <Compile Update="Views\MainPage.xaml.cs">
+            <DependentUpon>MainPage.xaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Remove="Views\MainView.cs" />
     </ItemGroup>
 
 </Project>

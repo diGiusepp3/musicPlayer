@@ -50,7 +50,6 @@ namespace MuziekApp.Services
 #if WINDOWS
                 try
                 {
-                    // Speel direct vanaf URL af
                     _mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(url));
                     _mediaPlayer.Volume = 1.0;
                     _mediaPlayer.Play();
@@ -61,7 +60,6 @@ namespace MuziekApp.Services
                     Console.WriteLine("[MiniPlayer] Windows playback error: " + ex.Message);
                 }
 #endif
-
             }
             else
             {
@@ -73,9 +71,6 @@ namespace MuziekApp.Services
             }
         }
 
-        /// <summary>
-        /// Speelt af of pauzeert afhankelijk van huidige status.
-        /// </summary>
         public void TogglePlayPause()
         {
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
@@ -96,9 +91,6 @@ namespace MuziekApp.Services
             }
         }
 
-        /// <summary>
-        /// Stop het huidige nummer.
-        /// </summary>
         public void Stop()
         {
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
@@ -115,7 +107,7 @@ namespace MuziekApp.Services
         }
 
         /// <summary>
-        /// Totale lengte van het huidige nummer.
+        /// Totale lengte van het nummer.
         /// </summary>
         public TimeSpan Duration
         {
@@ -123,9 +115,8 @@ namespace MuziekApp.Services
             {
 #if WINDOWS
                 return _mediaPlayer != null ? _mediaPlayer.NaturalDuration : TimeSpan.Zero;
-
 #else
-                return _player?.Duration ?? TimeSpan.Zero;
+                return _player != null ? TimeSpan.FromSeconds(_player.Duration) : TimeSpan.Zero;
 #endif
             }
         }
@@ -140,7 +131,7 @@ namespace MuziekApp.Services
 #if WINDOWS
                 return _mediaPlayer?.Position ?? TimeSpan.Zero;
 #else
-                return _player?.CurrentPosition ?? TimeSpan.Zero;
+                return _player != null ? TimeSpan.FromSeconds(_player.CurrentPosition) : TimeSpan.Zero;
 #endif
             }
         }
@@ -148,7 +139,6 @@ namespace MuziekApp.Services
         /// <summary>
         /// Spring naar een specifieke tijd in het nummer.
         /// </summary>
-        /// <param name="position">Nieuwe positie in seconden.</param>
         public void Seek(TimeSpan position)
         {
 #if WINDOWS
@@ -156,7 +146,7 @@ namespace MuziekApp.Services
                 _mediaPlayer.Position = position;
 #else
             if (_player != null)
-                _player.Seek(position);
+                _player.Seek(position.TotalSeconds); // <-- double verwacht
 #endif
         }
     }
