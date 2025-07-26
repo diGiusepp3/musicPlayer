@@ -11,4 +11,5 @@
 	<s:Boolean x:Key="/Default/Dpa/EnableInspections/=SqlConnectionCount/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Dpa/EnableInspections/=SqlRecordCount/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/Dpa/IsSqlAutoDisable/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">OnDebug</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">OnDebug</s:String>
+</wpf:ResourceDictionary>

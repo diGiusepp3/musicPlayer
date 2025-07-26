@@ -8,6 +8,7 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
+        // NavBar uitzetten voor het gehele Shell
         Shell.SetNavBarIsVisible(this, false);
 
         // Registreer routes
@@ -18,4 +19,4 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(VideoDownloadView), typeof(VideoDownloadView));
         Routing.RegisterRoute(nameof(SearchView), typeof(SearchView));
     }
-} 
+}

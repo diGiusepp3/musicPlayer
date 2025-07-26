@@ -5,15 +5,21 @@
        x:Class="MuziekApp.AppShell"
        Shell.NavBarIsVisible="False">
 
-    <!-- Startpagina -->
-    <ShellContent Title="Main" 
-                  ContentTemplate="{DataTemplate views:MainPage}" 
-                  Route="MainPage" />
-    
-    <!-- LoginView -->
-    <ShellContent Title="Login" ContentTemplate="{DataTemplate views:LoginView}" />
-    <!-- Nieuwe route voor SearchView -->
-    <ShellContent Title="Zoeken" ContentTemplate="{DataTemplate views:SearchView}" Route="SearchView" />
+    <!-- Hoofdpagina als startpunt -->
+    <ShellContent 
+        Title="Main" 
+        ContentTemplate="{DataTemplate views:MainView}" 
+        Route="MainView" />
 
+    <!-- Loginpagina (optioneel zichtbaar in Shell, meestal via routing) -->
+    <ShellContent 
+        Title="Login" 
+        ContentTemplate="{DataTemplate views:LoginView}" 
+        Route="LoginView" />
 
+    <!-- Zoekpagina -->
+    <ShellContent 
+        Title="Zoeken" 
+        ContentTemplate="{DataTemplate views:SearchView}" 
+        Route="SearchView" />
 </Shell>

@@ -34,7 +34,7 @@ public partial class MainPage : ContentPage
         MainContainer.TranslationX = 0;
 
         await Task.Delay(500); 
-        _ = _startupChecker.RunCheckAsync(); // fire & forget
+        _ = _startupChecker?.RunCheckAsync(); // null-check toegevoegd
     }
 
     private async Task AnimatePageOut()
@@ -53,5 +53,4 @@ public partial class MainPage : ContentPage
         await AnimatePageOut();
         await Shell.Current.GoToAsync(nameof(LoginView));
     }
-    
 }
