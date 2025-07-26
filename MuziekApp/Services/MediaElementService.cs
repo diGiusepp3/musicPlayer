@@ -25,8 +25,9 @@ public class MediaElementService
     public string CurrentTitle { get; private set; } = "";
     public string CurrentArtist { get; private set; } = "";
 
-    // === EVENT OM VIEWMODEL TE INFORMEREN ===
+    // === Events voor ViewModel ===
     public event Action<string, string>? OnSongChanged;
+    public event Func<Task>? OnSongEnded;
 
     public bool IsPlaying =>
 #if WINDOWS
@@ -40,7 +41,11 @@ public class MediaElementService
         _audioManager = AudioManager.Current;
 #if WINDOWS
         _mediaPlayer ??= new MediaPlayer();
-        _mediaPlayer.MediaEnded += (s, e) => PlayNext();
+        _mediaPlayer.MediaEnded += async (s, e) =>
+        {
+            if (OnSongEnded != null)
+                await OnSongEnded.Invoke();
+        };
 #endif
     }
 
@@ -74,8 +79,13 @@ public class MediaElementService
             var stream = new MemoryStream(data);
             _player = _audioManager.CreatePlayer(stream);
 
-            // === Autoplay event voor Android/iOS ===
-            _player.PlaybackEnded += (s, e) => PlayNext();
+            // Event koppelen voor Android/iOS
+            _player.PlaybackEnded += async (s, e) =>
+            {
+                if (OnSongEnded != null)
+                    await OnSongEnded.Invoke();
+            };
+
             _player.Play();
         }
     }
@@ -84,15 +94,12 @@ public class MediaElementService
     {
         if (_playlist.Count == 0) return;
 
-        // Shuffle staat in service zelf niet bekend, we doen hier alleen de index
         _currentIndex++;
         if (_currentIndex >= _playlist.Count) _currentIndex = 0;
 
         var song = _playlist[_currentIndex];
         await PlayAsync(song.AudioUrl, song.Title, song.Artist);
     }
-
-
 
     public void TogglePlayPause()
     {

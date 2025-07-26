@@ -143,7 +143,7 @@
 
             <!-- Play/Pause -->
             <ImageButton Grid.Row="0" Grid.Column="0"
-                         Source="{Binding PlayPauseIcon}"
+                         Source="{Binding PlayPauseIcon, FallbackValue='icon_play.png'}"
                          Command="{Binding TogglePlayPauseCommand}"
                          BackgroundColor="Transparent"
                          WidthRequest="40" HeightRequest="40"/>
@@ -156,14 +156,14 @@
 
             <!-- Next -->
             <ImageButton Grid.Row="0" Grid.Column="2"
-                         Source="icon_next.svg"
+                         Source="icon_next.png"
                          Command="{Binding PlayNextCommand}"
                          BackgroundColor="Transparent"
                          WidthRequest="40" HeightRequest="40"/>
 
             <!-- Shuffle -->
             <ImageButton Grid.Row="0" Grid.Column="3"
-                         Source="icon_shuffle.svg"
+                         Source="icon_shuffle.png"
                          Command="{Binding ToggleShuffleCommand}"
                          BackgroundColor="Transparent"
                          WidthRequest="40" HeightRequest="40"/>
@@ -177,3 +177,4 @@
         </Grid>
     </Grid>
 </ContentPage>
+ 

@@ -12,9 +12,9 @@
         <ApplicationTitle>Listen!</ApplicationTitle>
         <ApplicationId>be.webcrafters.listen</ApplicationId>
 
-        <ApplicationDisplayVersion>0.00.02</ApplicationDisplayVersion>
-        <ApplicationVersion>2</ApplicationVersion>
-
+        <ApplicationDisplayVersion>0.00.05</ApplicationDisplayVersion>
+        <ApplicationVersion>5</ApplicationVersion>
+ 
         <WindowsPackageType>None</WindowsPackageType>
 
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
@@ -40,8 +40,6 @@
         <AndroidPackageFormat>aab</AndroidPackageFormat>
         <PublishDir>$(MSBuildProjectDirectory)\apk\</PublishDir>
     </PropertyGroup>
-
-
 
     <ItemGroup>
         <!-- App Icon -->

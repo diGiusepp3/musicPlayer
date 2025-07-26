@@ -24,12 +24,14 @@ public partial class App : Application
             if (savedUser != null)
             {
                 Console.WriteLine($"[USER] {savedUser.DisplayName} is al ingelogd → Direct naar MainView");
-                await Shell.Current.GoToAsync($"{nameof(MainView)}", true);
+                // **Absolute route naar MainView**
+                await Shell.Current.GoToAsync($"//{nameof(MainView)}", true);
             }
             else
             {
                 Console.WriteLine("[USER] Geen user.json gevonden → Naar LoginView");
-                await Shell.Current.GoToAsync($"{nameof(LoginView)}", true);
+                // **Absolute route naar LoginView**
+                await Shell.Current.GoToAsync($"//{nameof(LoginView)}", true);
             }
         }
         catch (Exception ex)

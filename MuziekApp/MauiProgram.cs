@@ -31,11 +31,8 @@ public static class MauiProgram
         builder.Services.AddTransient<AllMusicViewModel>();
         builder.Services.AddTransient<AllMusicPage>();
         builder.Services.AddSingleton<StartupCheckService>();
-
-
-
-
-
+        builder.Services.AddTransient<SearchViewModel>();
+        builder.Services.AddTransient<SearchView>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

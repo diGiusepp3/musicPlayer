@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using MuziekApp.Services;
 using MuziekApp.Views;
-using MuziekApp.Models;   // <- toegevoegd zodat User herkend wordt
+using MuziekApp.Models;
 
 namespace MuziekApp.ViewModels;
 
@@ -22,25 +22,44 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     private async Task Login()
     {
-        Message = string.Empty;
-
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        try
         {
-            Message = "Vul alle velden in.";
-            return;
-        }
+            Message = string.Empty;
 
-        var user = await _database.LoginAndGetUserAsync(Email, Password);
-        if (user == null)
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+            {
+                Message = "Vul alle velden in.";
+                return;
+            }
+
+            var user = await _database.LoginAndGetUserAsync(Email, Password);
+            if (user == null)
+            {
+                Message = "Verkeerde gegevens!";
+                return;
+            }
+
+            // Sla gebruiker lokaal op
+            try
+            {
+                LocalStorageService.SaveUser(user);
+            }
+            catch (Exception ex)
+            {
+                Message = "Opslaan van gebruiker mislukt: " + ex.Message;
+            }
+
+            Message = $"Welkom {user.DisplayName}!";
+
+            // Veilig navigeren
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync($"//{nameof(MainView)}");
+            else
+                Message = "Shell niet beschikbaar, navigatie mislukt.";
+        }
+        catch (Exception ex)
         {
-            Message = "Verkeerde gegevens!";
-            return;
+            Message = $"Er is een fout opgetreden: {ex.Message}";
         }
-
-        // Sla gebruiker lokaal op via REST
-        LocalStorageService.SaveUser(user);
-
-        Message = $"Welkom {user.DisplayName}!";
-        await Shell.Current.GoToAsync($"//{nameof(MainView)}");
     }
 }

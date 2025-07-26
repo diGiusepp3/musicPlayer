@@ -11,6 +11,7 @@ namespace MuziekApp.Services
 
         public DatabaseService()
         {
+            // Basis URL naar jouw API
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("https://music.datadrive.be/api/")
@@ -140,12 +141,12 @@ namespace MuziekApp.Services
             }
         }
 
-        // === YOUTUBE DOWNLOAD ===
-        public async Task<bool> DownloadFromYouTubeAsync(string searchQuery)
+        // === YOUTUBE DOWNLOAD (single track) ===
+        public async Task<bool> DownloadFromYouTubeAsync(string youtubeUrl)
         {
             try
             {
-                var jsonContent = JsonContent.Create(new { url = searchQuery, type = "audio" });
+                var jsonContent = JsonContent.Create(new { url = youtubeUrl, type = "audio" });
                 var response = await _httpClient.PostAsync("functions/download.php?single=1", jsonContent);
 
                 if (!response.IsSuccessStatusCode)
@@ -156,6 +157,8 @@ namespace MuziekApp.Services
 
                 var raw = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("YT DOWNLOAD RAW: " + raw);
+
+                // We verwachten een JSON met een 'id'
                 return raw.Contains("id");
             }
             catch (Exception ex)
@@ -165,7 +168,7 @@ namespace MuziekApp.Services
             }
         }
 
-        // === ALLE SONGS ===
+        // === ALLE SONGS OPHALEN ===
         public async Task<List<Song>> GetAllSongsAsync()
         {
             try
@@ -207,13 +210,14 @@ namespace MuziekApp.Services
                 return new List<Album>();
             }
         }
-        
+
+        // === YOUTUBE SEARCH (via PHP API) ===
         public async Task<List<SearchResultItem>> SearchYouTubeAsync(string query)
         {
             try
             {
-                var jsonContent = JsonContent.Create(new { query });
-                var response = await _httpClient.PostAsync("functions/search_youtube.php", jsonContent);
+                var url = $"functions/search.php?q={Uri.EscapeDataString(query)}";
+                var response = await _httpClient.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
                     return new List<SearchResultItem>();
@@ -230,6 +234,5 @@ namespace MuziekApp.Services
                 return new List<SearchResultItem>();
             }
         }
-
     }
 }

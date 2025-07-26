@@ -12,5 +12,8 @@
     
     <!-- LoginView -->
     <ShellContent Title="Login" ContentTemplate="{DataTemplate views:LoginView}" />
+    <!-- Nieuwe route voor SearchView -->
+    <ShellContent Title="Zoeken" ContentTemplate="{DataTemplate views:SearchView}" Route="SearchView" />
+
 
 </Shell>
