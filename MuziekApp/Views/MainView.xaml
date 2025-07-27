@@ -43,13 +43,13 @@
 
             <!-- Zoekresultaten dropdown -->
             <CollectionView x:Name="ResultsDropdown"
-                Grid.Row="2"
-                Grid.ColumnSpan="3"
-                ItemsSource="{Binding Results}"
-                IsVisible="False"
-                HeightRequest="300"
-                BackgroundColor="#1B263B"
-                Margin="0,10,0,0">
+                            Grid.Row="2"
+                            Grid.ColumnSpan="3"
+                            ItemsSource="{Binding Results}"
+                            IsVisible="False"
+                            HeightRequest="300"
+                            BackgroundColor="#1B263B"
+                            Margin="0,10,0,0">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="10" ColumnDefinitions="Auto,*,Auto"
@@ -78,14 +78,11 @@
                                          Clicked="OnAddButtonClicked"
                                          VerticalOptions="Center"
                                          HorizontalOptions="End"/>
-
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
-
             </CollectionView>
         </Grid>
-
 
         <!-- Hoofdinhoud -->
         <ScrollView Grid.Row="1">
@@ -154,7 +151,6 @@
         </ScrollView>
 
         <!-- MiniPlayer -->
-        <!-- MiniPlayer -->
         <Grid x:Name="MiniPlayerGrid"
               Grid.Row="2"
               BackgroundColor="#181818"
@@ -162,14 +158,8 @@
               HeightRequest="80"
               IsVisible="{Binding IsMiniPlayerVisible}">
 
-            <!-- Visualizer achtergrond -->
-            <GraphicsView
-                x:Name="VisualizerView"
-                Drawable="{x:Null}"
-                VerticalOptions="Fill"
-                HorizontalOptions="Fill" />
+            <GraphicsView x:Name="VisualizerView" Drawable="{x:Null}" VerticalOptions="Fill" HorizontalOptions="Fill" />
 
-            <!-- Overlay met knoppen, info en slider -->
             <Grid Padding="10">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnMiniPlayerTapped"/>
@@ -186,56 +176,34 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Play/Pause -->
-                <ImageButton
-                    Grid.Row="0" Grid.Column="0"
-                    Source="{Binding PlayPauseIcon}"
-                    Command="{Binding TogglePlayPauseCommand}"
-                    BackgroundColor="Transparent"
-                    WidthRequest="40"
-                    HeightRequest="40"/>
-
-                <!-- Song info -->
-                <VerticalStackLayout
-                    Grid.Row="0" Grid.Column="1"
-                    Spacing="0" Padding="5,0">
-                    <Label
-                        Text="{Binding CurrentSongTitle}"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        FontSize="14"/>
-                    <Label
-                        Text="{Binding CurrentSongArtist}"
-                        TextColor="Gray"
-                        FontSize="12"/>
+                <ImageButton Grid.Row="0" Grid.Column="0"
+                             Source="{Binding PlayPauseIcon}"
+                             Command="{Binding TogglePlayPauseCommand}"
+                             BackgroundColor="Transparent"
+                             WidthRequest="40"
+                             HeightRequest="40"/>
+                <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="0" Padding="5,0">
+                    <Label Text="{Binding CurrentSongTitle}" TextColor="White" FontAttributes="Bold" FontSize="14"/>
+                    <Label Text="{Binding CurrentSongArtist}" TextColor="Gray" FontSize="12"/>
                 </VerticalStackLayout>
-
-                <!-- Next -->
-                <ImageButton
-                    Grid.Row="0" Grid.Column="2"
-                    Source="icon_next.svg"
-                    Command="{Binding PlayNextCommand}"
-                    BackgroundColor="Transparent"
-                    WidthRequest="40"
-                    HeightRequest="40"/>
-
-                <!-- Shuffle -->
-                <ImageButton
-                    Grid.Row="0" Grid.Column="3"
-                    Source="icon_shuffle.svg"
-                    Command="{Binding ToggleShuffleCommand}"
-                    BackgroundColor="Transparent"
-                    WidthRequest="40"
-                    HeightRequest="40"/>
-
-                <!-- Slider -->
-                <Slider
-                    x:Name="ProgressSlider"
-                    Grid.Row="1" Grid.ColumnSpan="4"
-                    Minimum="0"
-                    Maximum="{Binding CurrentSongDuration}"
-                    Value="{Binding CurrentSongPosition, Mode=TwoWay}"
-                    DragCompleted="OnSliderDragCompleted"/>
+                <ImageButton Grid.Row="0" Grid.Column="2"
+                             Source="icon_next.svg"
+                             Command="{Binding PlayNextCommand}"
+                             BackgroundColor="Transparent"
+                             WidthRequest="40"
+                             HeightRequest="40"/>
+                <ImageButton Grid.Row="0" Grid.Column="3"
+                             Source="icon_shuffle.svg"
+                             Command="{Binding ToggleShuffleCommand}"
+                             BackgroundColor="Transparent"
+                             WidthRequest="40"
+                             HeightRequest="40"/>
+                <Slider x:Name="ProgressSlider"
+                        Grid.Row="1" Grid.ColumnSpan="4"
+                        Minimum="0"
+                        Maximum="{Binding CurrentSongDuration}"
+                        Value="{Binding CurrentSongPosition, Mode=TwoWay}"
+                        DragCompleted="OnSliderDragCompleted"/>
             </Grid>
         </Grid>
     </Grid>
