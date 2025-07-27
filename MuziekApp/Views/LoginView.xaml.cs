@@ -1,13 +1,12 @@
 ﻿using MuziekApp.ViewModels;
 
-namespace MuziekApp.Views
+namespace MuziekApp.Views;
+
+public partial class LoginView : ContentPage
 {
-    public partial class LoginView : ContentPage
+    public LoginView(LoginViewModel vm)
     {
-        public LoginView(LoginViewModel vm)
-        {
-            InitializeComponent();
-            BindingContext = vm;
-        }
+        InitializeComponent();
+        BindingContext = vm;
     }
 }

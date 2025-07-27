@@ -11,12 +11,10 @@ public partial class AppShell : Shell
         // NavBar uitzetten voor het gehele Shell
         Shell.SetNavBarIsVisible(this, false);
 
-        // Registreer routes
+        // Routes registreren
         Routing.RegisterRoute(nameof(MainView), typeof(MainView));
         Routing.RegisterRoute(nameof(LoginView), typeof(LoginView));
         Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
-        //Routing.RegisterRoute(nameof(UploadSongView), typeof(UploadSongView));
-        //Routing.RegisterRoute(nameof(VideoDownloadView), typeof(VideoDownloadView));
-        //Routing.RegisterRoute(nameof(SearchView), typeof(SearchView));
+        Routing.RegisterRoute(nameof(SearchView), typeof(SearchView));
     }
 }

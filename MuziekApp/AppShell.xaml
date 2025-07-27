@@ -11,16 +11,15 @@
         ContentTemplate="{DataTemplate views:MainView}" 
         Route="MainView" />
 
-    <!-- Loginpagina (optioneel zichtbaar in Shell, meestal via routing) -->
+    <!-- Loginpagina -->
     <ShellContent 
         Title="Login" 
         ContentTemplate="{DataTemplate views:LoginView}" 
         Route="LoginView" />
 
-    <!-- Zoekpagina 
+    <!-- Zoekpagina -->
     <ShellContent 
         Title="Zoeken" 
         ContentTemplate="{DataTemplate views:SearchView}" 
         Route="SearchView" />
-        -->
 </Shell>

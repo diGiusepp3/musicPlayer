@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MuziekApp.Views.SearchView"
+             BackgroundColor="#0D1B2A">
+
+    <Grid Padding="20" RowDefinitions="Auto, *">
+        <!-- Zoekbalk -->
+        <Entry Placeholder="Zoek naar liedjes..."
+               x:Name="SearchEntry"
+               BackgroundColor="White"
+               TextColor="Black"
+               TextChanged="OnSearchTextChanged" />
+
+        <!-- Dropdown met resultaten -->
+        <CollectionView x:Name="ResultsDropdown"
+                        ItemsSource="{Binding Results}"
+                        IsVisible="False"
+                        Grid.Row="1"
+                        HeightRequest="300"
+                        BackgroundColor="#1B263B"
+                        Margin="0,10,0,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="5" ColumnDefinitions="Auto,*,Auto">
+                        <Image Source="{Binding Thumbnail}"
+                               WidthRequest="50"
+                               HeightRequest="50"
+                               Aspect="AspectFill"/>
+                        <VerticalStackLayout Grid.Column="1" Padding="10,0">
+                            <Label Text="{Binding Title}"
+                                   TextColor="White"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding Channel}"
+                                   TextColor="LightGray"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2"
+                                Text="+"
+                                WidthRequest="40"
+                                HeightRequest="40"
+                                BackgroundColor="#1DB954"
+                                Clicked="OnAddButtonClicked"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

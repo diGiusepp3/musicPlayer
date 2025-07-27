@@ -26,8 +26,13 @@ public static class MauiProgram
         builder.Services.AddTransient<RegisterView>();
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddTransient<MainView>();
-       // builder.Services.AddTransient<AllMusicPage>();
         builder.Services.AddSingleton<StartupCheckService>();
+
+        // === Search functionaliteit ===
+        builder.Services.AddSingleton<SearchService>();
+        builder.Services.AddTransient<SearchViewModel>();
+        builder.Services.AddTransient<SearchView>();
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

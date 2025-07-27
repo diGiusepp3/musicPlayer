@@ -11,9 +11,6 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.Maui;
 
-// Dit ViewModel gebruikt voortaan altijd de playlist uit MediaElementService.
-// Bij autoplay (OnSongEnded) wacht het 200 ms voordat het PlayNext aanroept om native crashes te voorkomen.
-
 namespace MuziekApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
@@ -21,6 +18,7 @@ namespace MuziekApp.ViewModels
         private readonly SongService _songService = new();
         private readonly DatabaseService _databaseService = new();
         private readonly HttpClient _http = new();
+        private readonly SearchService _searchService;
 
         private int currentIndex = -1;
 
@@ -34,12 +32,10 @@ namespace MuziekApp.ViewModels
         [ObservableProperty] private double currentSongDuration;
         [ObservableProperty] private double currentSongPosition;
 
-        // search props
-        [ObservableProperty] private string searchText;
-        [ObservableProperty] private ObservableCollection<SearchResultItem> searchResults = new();
-        [ObservableProperty] private bool isSearchResultsVisible;
-
-        // dynamic play/pause (gebruik PNG iconen voor betrouwbaarheid)
+        // Live search
+        public ObservableCollection<SearchResult> Results { get; set; } = new();
+    
+        // dynamic play/pause
         [ObservableProperty] private string playPauseIcon = "icon_pause.png";
 
         public ObservableCollection<SongDto> Songs { get; } = new();
@@ -48,14 +44,16 @@ namespace MuziekApp.ViewModels
 
         public MainViewModel()
         {
-            // Timer om positie slider bij te werken
+            _searchService = new SearchService(); // <-- FIX
+
+            // Timer voor positie slider
             Microsoft.Maui.Controls.Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
             {
                 UpdatePosition();
                 return true;
             });
 
-            // Autoplay: als een nummer eindigt, wacht 200 ms en speel het volgende
+            // Autoplay event
             MediaElementService.Current.OnSongEnded += async () =>
             {
                 Console.WriteLine("[PLAYER] Song ended...");
@@ -71,7 +69,7 @@ namespace MuziekApp.ViewModels
                 }
             };
 
-            // SongChanged update UI
+            // SongChanged event
             MediaElementService.Current.OnSongChanged += (title, artist) =>
             {
                 CurrentSongTitle = title;
@@ -80,7 +78,6 @@ namespace MuziekApp.ViewModels
                 PlayPauseIcon = "icon_pause.png";
             };
 
-            // Laad alle data én stel playlist in
             LoadAllDataCommand.Execute(null);
         }
 
@@ -102,7 +99,6 @@ namespace MuziekApp.ViewModels
                     Songs.Add(song);
                 }
 
-                // Stel playlist in bij MediaElementService
                 MediaElementService.Current.SetPlaylist(
                     Songs.Select(s => new PlaylistSong(s.title, s.artists, s.file_url))
                 );
@@ -133,10 +129,8 @@ namespace MuziekApp.ViewModels
         private async Task PlaySong(SongDto song)
         {
             if (song == null) return;
-
             currentIndex = Songs.IndexOf(song);
             await MediaElementService.Current.PlayAsync(song.file_url, song.title, song.artists);
-            // UI wordt via OnSongChanged geüpdatet
         }
 
         [RelayCommand]
@@ -177,53 +171,34 @@ namespace MuziekApp.ViewModels
         [RelayCommand]
         private void ToggleShuffle() => IsShuffleEnabled = !IsShuffleEnabled;
 
-        [RelayCommand]
-        private async Task SearchAsync()
+        public async Task PerformSearchAsync(string query)
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
+            if (string.IsNullOrWhiteSpace(query))
             {
-                SearchResults.Clear();
-                IsSearchResultsVisible = false;
+                Results.Clear();
                 return;
             }
 
             try
             {
-                var url = $"https://music.datadrive.be/api/functions/search.php?q={Uri.EscapeDataString(SearchText)}";
-                var items = await _http.GetFromJsonAsync<List<SearchResultItem>>(url);
+                Console.WriteLine($"[SEARCH] API call met query: {query}");
+                var found = await _searchService.SearchAsync(query);
 
-                SearchResults.Clear();
-                if (items != null)
-                    foreach (var it in items)
-                        SearchResults.Add(it);
+                Results.Clear();
+                foreach (var item in found)
+                {
+                    Console.WriteLine($"[SEARCH] Resultaat: {item.Title} | {item.Channel} | {item.Thumbnail}");
+                    Results.Add(item);
+                }
 
-                IsSearchResultsVisible = SearchResults.Any();
+                Console.WriteLine($"[SEARCH] {Results.Count} resultaten gevonden.");
             }
             catch (Exception ex)
             {
-                Message = "Zoeken mislukt: " + ex.Message;
+                Console.WriteLine("[SEARCH] Fout: " + ex.Message);
             }
         }
 
-        [RelayCommand]
-        private async Task OpenVideo(SearchResultItem item)
-        {
-            if (item == null) return;
-
-            IsSearchResultsVisible = false;
-            var url = string.IsNullOrEmpty(item.Url)
-                ? $"https://www.youtube.com/watch?v={item.VideoId}"
-                : item.Url;
-
-            /* Todo:
-             await Shell.Current.GoToAsync(nameof(VideoDownloadView), new Dictionary<string, object>
-                {
-                    ["title"] = item.Title,
-                    ["thumb"] = item.Thumbnail,
-                    ["url"]   = url
-                });
-            */
-        }
 
         public void UpdatePosition()
         {
