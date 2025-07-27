@@ -17,9 +17,10 @@
         ContentTemplate="{DataTemplate views:LoginView}" 
         Route="LoginView" />
 
-    <!-- Zoekpagina -->
+    <!-- Zoekpagina 
     <ShellContent 
         Title="Zoeken" 
         ContentTemplate="{DataTemplate views:SearchView}" 
         Route="SearchView" />
+        -->
 </Shell>

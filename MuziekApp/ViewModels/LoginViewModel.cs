@@ -4,25 +4,23 @@ using MuziekApp.Services;
 using MuziekApp.Views;
 using MuziekApp.Models;
 
-namespace MuziekApp.ViewModels;
-
-public partial class LoginViewModel : ObservableObject
+namespace MuziekApp.ViewModels
 {
-    private readonly DatabaseService _database;
-
-    [ObservableProperty] private string email;
-    [ObservableProperty] private string password;
-    [ObservableProperty] private string message;
-
-    public LoginViewModel(DatabaseService database)
+    public partial class LoginViewModel : ObservableObject
     {
-        _database = database;
-    }
+        private readonly DatabaseService _database;
 
-    [RelayCommand]
-    private async Task Login()
-    {
-        try
+        [ObservableProperty] private string email;
+        [ObservableProperty] private string password;
+        [ObservableProperty] private string message;
+
+        public LoginViewModel(DatabaseService database)
+        {
+            _database = database;
+        }
+
+        [RelayCommand]
+        private async Task Login()
         {
             Message = string.Empty;
 
@@ -32,14 +30,13 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            var user = await _database.LoginAndGetUserAsync(Email, Password);
+            var (user, serverMessage) = await _database.LoginAndGetUserAsync(Email, Password);
             if (user == null)
             {
-                Message = "Verkeerde gegevens!";
+                Message = serverMessage ?? "Verkeerde gegevens!";
                 return;
             }
 
-            // Sla gebruiker lokaal op
             try
             {
                 LocalStorageService.SaveUser(user);
@@ -47,19 +44,18 @@ public partial class LoginViewModel : ObservableObject
             catch (Exception ex)
             {
                 Message = "Opslaan van gebruiker mislukt: " + ex.Message;
+                return;
             }
 
-            Message = $"Welkom {user.DisplayName}!";
-
-            // Veilig navigeren
-            if (Shell.Current != null)
-                await Shell.Current.GoToAsync($"//{nameof(MainView)}");
-            else
-                Message = "Shell niet beschikbaar, navigatie mislukt.";
+            Message = $"Welkom {user.DisplayName ?? user.Email}!";
+            await Task.Delay(1000);
+            await Shell.Current.GoToAsync($"//{nameof(MainView)}");
         }
-        catch (Exception ex)
+
+        [RelayCommand]
+        private async Task NavigateToRegister()
         {
-            Message = $"Er is een fout opgetreden: {ex.Message}";
+            await Shell.Current.GoToAsync(nameof(RegisterView));
         }
     }
 }

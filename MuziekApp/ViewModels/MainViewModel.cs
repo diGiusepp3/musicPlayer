@@ -215,12 +215,14 @@ namespace MuziekApp.ViewModels
                 ? $"https://www.youtube.com/watch?v={item.VideoId}"
                 : item.Url;
 
-            await Shell.Current.GoToAsync(nameof(VideoDownloadView), new Dictionary<string, object>
-            {
-                ["title"] = item.Title,
-                ["thumb"] = item.Thumbnail,
-                ["url"]   = url
-            });
+            /* Todo:
+             await Shell.Current.GoToAsync(nameof(VideoDownloadView), new Dictionary<string, object>
+                {
+                    ["title"] = item.Title,
+                    ["thumb"] = item.Thumbnail,
+                    ["url"]   = url
+                });
+            */
         }
 
         public void UpdatePosition()

@@ -21,6 +21,7 @@ namespace MuziekApp.Services
         private class ApiResponse
         {
             public string Status { get; set; }
+            public string Message { get; set; }
         }
 
         private class LoginResponse
@@ -46,7 +47,7 @@ namespace MuziekApp.Services
         }
 
         // === REGISTER ===
-        public async Task<bool> RegisterUserAsync(string email, string password)
+        public async Task<(bool success, string message)> RegisterUserAsync(string email, string password)
         {
             try
             {
@@ -54,28 +55,30 @@ namespace MuziekApp.Services
                 var response = await _httpClient.PostAsync("users/register.php", jsonContent);
 
                 if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Register HTTP error: " + response.StatusCode);
-                    return false;
-                }
+                    return (false, $"HTTP fout: {response.StatusCode}");
 
                 var raw = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("REGISTER RESPONSE RAW: " + raw);
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var result = JsonSerializer.Deserialize<ApiResponse>(raw, options);
+                var result = JsonSerializer.Deserialize<ApiResponse>(raw, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-                return result?.Status == "ok";
+                if (result == null)
+                    return (false, "Ongeldige server response");
+
+                return (result.Status == "ok", result.Message ?? (result.Status == "ok" ? "OK" : "Onbekende fout"));
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Register exception: " + ex.Message);
-                return false;
+                return (false, "Uitzondering: " + ex.Message);
             }
         }
 
         // === LOGIN ===
-        public async Task<User?> LoginAndGetUserAsync(string email, string password)
+        public async Task<(User user, string message)> LoginAndGetUserAsync(string email, string password)
         {
             try
             {
@@ -83,23 +86,25 @@ namespace MuziekApp.Services
                 var response = await _httpClient.PostAsync("users/login.php", jsonContent);
 
                 if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Login HTTP error: " + response.StatusCode);
-                    return null;
-                }
+                    return (null, $"HTTP fout: {response.StatusCode}");
 
                 var raw = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("LOGIN RESPONSE RAW: " + raw);
 
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var result = JsonSerializer.Deserialize<LoginResponse>(raw, options);
+                var result = JsonSerializer.Deserialize<LoginResponse>(raw, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-                return result?.Status == "ok" ? result.User : null;
+                if (result?.Status == "ok" && result.User != null)
+                    return (result.User, "OK");
+
+                return (null, "Verkeerde gegevens of onbekende fout");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Login exception: " + ex.Message);
-                return null;
+                return (null, "Uitzondering: " + ex.Message);
             }
         }
 

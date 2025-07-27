@@ -12,9 +12,9 @@
         <ApplicationTitle>Listen!</ApplicationTitle>
         <ApplicationId>be.webcrafters.listen</ApplicationId>
 
-        <ApplicationDisplayVersion>0.00.05</ApplicationDisplayVersion>
-        <ApplicationVersion>5</ApplicationVersion>
- 
+        <ApplicationDisplayVersion>0.00.02</ApplicationDisplayVersion>
+        <ApplicationVersion>2</ApplicationVersion>
+
         <WindowsPackageType>None</WindowsPackageType>
 
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
@@ -41,6 +41,8 @@
         <PublishDir>$(MSBuildProjectDirectory)\apk\</PublishDir>
     </PropertyGroup>
 
+
+
     <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -63,6 +65,13 @@
         <MauiImage Include="Resources\Images\Artists\artist2.png" />
         <None Remove="Resources\Images\Artists\Artist3.png" />
         <MauiImage Include="Resources\Images\Artists\artist3.png" />
+
+        <MauiImage Update="Resources\Images\icon_play.png" BaseSize="40,40" />
+        <MauiImage Update="Resources\Images\icon_pause.png" BaseSize="40,40" />
+        <MauiImage Update="Resources\Images\icon_next.png" BaseSize="40,40" />
+        <MauiImage Update="Resources\Images\icon_shuffle.png" BaseSize="40,40" />
+
+
     </ItemGroup>
 
     <ItemGroup>

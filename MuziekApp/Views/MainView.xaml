@@ -128,53 +128,89 @@
         </ScrollView>
 
         <!-- MiniPlayer -->
-        <Grid Grid.Row="2" BackgroundColor="#181818" Padding="10" HeightRequest="80"
+        <!-- MiniPlayer -->
+        <Grid x:Name="MiniPlayerGrid"
+              Grid.Row="2"
+              BackgroundColor="#181818"
+              Padding="0"
+              HeightRequest="80"
               IsVisible="{Binding IsMiniPlayerVisible}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
 
-            <!-- Play/Pause -->
-            <ImageButton Grid.Row="0" Grid.Column="0"
-                         Source="{Binding PlayPauseIcon, FallbackValue='icon_play.png'}"
-                         Command="{Binding TogglePlayPauseCommand}"
-                         BackgroundColor="Transparent"
-                         WidthRequest="40" HeightRequest="40"/>
+            <!-- Visualizer achtergrond -->
+            <GraphicsView
+                x:Name="VisualizerView"
+                Drawable="{x:Null}"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill" />
 
-            <!-- Song info -->
-            <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="0" Padding="5,0">
-                <Label Text="{Binding CurrentSongTitle}" TextColor="White" FontAttributes="Bold" FontSize="14"/>
-                <Label Text="{Binding CurrentSongArtist}" TextColor="Gray" FontSize="12"/>
-            </VerticalStackLayout>
+            <!-- Overlay met knoppen, info en slider -->
+            <Grid Padding="10">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnMiniPlayerTapped"/>
+                </Grid.GestureRecognizers>
 
-            <!-- Next -->
-            <ImageButton Grid.Row="0" Grid.Column="2"
-                         Source="icon_next.png"
-                         Command="{Binding PlayNextCommand}"
-                         BackgroundColor="Transparent"
-                         WidthRequest="40" HeightRequest="40"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <!-- Shuffle -->
-            <ImageButton Grid.Row="0" Grid.Column="3"
-                         Source="icon_shuffle.png"
-                         Command="{Binding ToggleShuffleCommand}"
-                         BackgroundColor="Transparent"
-                         WidthRequest="40" HeightRequest="40"/>
+                <!-- Play/Pause -->
+                <ImageButton
+                    Grid.Row="0" Grid.Column="0"
+                    Source="{Binding PlayPauseIcon}"
+                    Command="{Binding TogglePlayPauseCommand}"
+                    BackgroundColor="Transparent"
+                    WidthRequest="40"
+                    HeightRequest="40"/>
 
-            <!-- Voortgangsbalk -->
-            <Slider x:Name="ProgressSlider" Grid.Row="1" Grid.ColumnSpan="4"
+                <!-- Song info -->
+                <VerticalStackLayout
+                    Grid.Row="0" Grid.Column="1"
+                    Spacing="0" Padding="5,0">
+                    <Label
+                        Text="{Binding CurrentSongTitle}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="14"/>
+                    <Label
+                        Text="{Binding CurrentSongArtist}"
+                        TextColor="Gray"
+                        FontSize="12"/>
+                </VerticalStackLayout>
+
+                <!-- Next -->
+                <ImageButton
+                    Grid.Row="0" Grid.Column="2"
+                    Source="icon_next.svg"
+                    Command="{Binding PlayNextCommand}"
+                    BackgroundColor="Transparent"
+                    WidthRequest="40"
+                    HeightRequest="40"/>
+
+                <!-- Shuffle -->
+                <ImageButton
+                    Grid.Row="0" Grid.Column="3"
+                    Source="icon_shuffle.svg"
+                    Command="{Binding ToggleShuffleCommand}"
+                    BackgroundColor="Transparent"
+                    WidthRequest="40"
+                    HeightRequest="40"/>
+
+                <!-- Slider -->
+                <Slider
+                    x:Name="ProgressSlider"
+                    Grid.Row="1" Grid.ColumnSpan="4"
                     Minimum="0"
                     Maximum="{Binding CurrentSongDuration}"
                     Value="{Binding CurrentSongPosition, Mode=TwoWay}"
                     DragCompleted="OnSliderDragCompleted"/>
+            </Grid>
         </Grid>
     </Grid>
 </ContentPage>
- 

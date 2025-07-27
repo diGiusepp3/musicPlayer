@@ -3,49 +3,56 @@ using CommunityToolkit.Mvvm.Input;
 using MuziekApp.Services;
 using MuziekApp.Views;
 
-namespace MuziekApp.ViewModels;
-
-public partial class RegisterViewModel : ObservableObject
+namespace MuziekApp.ViewModels
 {
-    private readonly DatabaseService _database;
-
-    [ObservableProperty] private string email;
-    [ObservableProperty] private string password;
-    [ObservableProperty] private string confirmPassword;
-    [ObservableProperty] private string message;
-
-    public RegisterViewModel(DatabaseService database)
+    public partial class RegisterViewModel : ObservableObject
     {
-        _database = database;
-    }
+        private readonly DatabaseService _database;
 
-    [RelayCommand]
-    private async Task Register()
-    {
-        Message = string.Empty;
+        [ObservableProperty] private string email;
+        [ObservableProperty] private string password;
+        [ObservableProperty] private string confirmPassword;
+        [ObservableProperty] private string message;
 
-        if (string.IsNullOrWhiteSpace(Email) ||
-            string.IsNullOrWhiteSpace(Password) ||
-            string.IsNullOrWhiteSpace(ConfirmPassword))
+        public RegisterViewModel(DatabaseService database)
         {
-            Message = "Vul alle velden in.";
-            return;
+            _database = database;
         }
 
-        if (Password != ConfirmPassword)
+        [RelayCommand]
+        private async Task Register()
         {
-            Message = "Wachtwoorden komen niet overeen.";
-            return;
-        }
+            Message = string.Empty;
 
-        var success = await _database.RegisterUserAsync(Email, Password);
-        if (!success)
-        {
-            Message = "Gebruiker bestaat al!";
-            return;
-        }
+            // === Validatie ===
+            if (string.IsNullOrWhiteSpace(Email) ||
+                string.IsNullOrWhiteSpace(Password) ||
+                string.IsNullOrWhiteSpace(ConfirmPassword))
+            {
+                Message = "Vul alle velden in.";
+                return;
+            }
 
-        Message = "Registratie gelukt! Je wordt doorgestuurd...";
-        await Shell.Current.GoToAsync(nameof(LoginView));
+            if (Password != ConfirmPassword)
+            {
+                Message = "Wachtwoorden komen niet overeen.";
+                return;
+            }
+
+            // === API-aanroep ===
+            var (success, serverMessage) = await _database.RegisterUserAsync(Email, Password);
+
+            if (!success)
+            {
+                Message = serverMessage ?? "Registratie mislukt!";
+                return;
+            }
+
+            Message = "Registratie gelukt! Je wordt doorgestuurd...";
+
+            // === Navigatie naar Login ===
+            await Task.Delay(1500); // korte delay voor feedback
+            await Shell.Current.GoToAsync(nameof(LoginView));
+        }
     }
 }
